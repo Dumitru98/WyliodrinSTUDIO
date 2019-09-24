@@ -11,6 +11,7 @@ let raspberrypiWithLed = {
 		pin: '6',
 		component: 'LED',
 		state: 'OUT',
+		value: -1,
 		color: '0',
 		colorName: 'RED',
 		partID: '75290'

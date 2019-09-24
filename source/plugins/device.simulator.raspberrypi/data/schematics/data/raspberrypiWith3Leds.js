@@ -11,6 +11,7 @@ let raspberrypiWith3Leds = {
 		pin: '6',
 		component: 'LED',
 		state: 'OUT',
+		value: -1,
 		color: '0',
 		colorName: 'RED',
 		partID: '59110'
@@ -30,6 +31,7 @@ let raspberrypiWith3Leds = {
 		pin: '14',
 		component: 'LED',
 		state: 'OUT',
+		value: -1,
 		color: '58',
 		colorName: 'YELLOW',
 		partID: '66100'
@@ -55,6 +57,7 @@ let raspberrypiWith3Leds = {
 		pin: '28',
 		component: 'LED',
 		state: 'OUT',
+		value: -1,
 		color: '117',
 		colorName: 'GREEN',
 		partID: '63740'

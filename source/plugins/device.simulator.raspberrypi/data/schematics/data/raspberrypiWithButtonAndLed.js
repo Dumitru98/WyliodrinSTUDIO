@@ -5,6 +5,7 @@ let raspberrypiWithButtonAndLed = {
 		pin: '2',
 		component: 'BUTTON',
 		state: 'IN',
+		value: -1,
 		color: '-',
 		colorName: '-',
 		partID: '72670'
@@ -18,6 +19,7 @@ let raspberrypiWithButtonAndLed = {
 		pin: '6',
 		component: 'LED',
 		state: 'OUT',
+		value: 0,
 		color: '0',
 		colorName: 'RED',
 		partID: '70970'

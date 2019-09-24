@@ -7,15 +7,15 @@ let onoff =
 		this.options = options;
 
 		this.read = function() {
-			onoff.Gpio.read();
+			return onoff.Gpio.read(this.pin);
 		};
 
 		this.readSync = function() {
-			onoff.Gpio.readSync(this.pin);
+			return onoff.Gpio.readSync(this.pin);
 		};
 
 		this.write = function(value) {
-			onoff.Gpio.write(value);
+			onoff.Gpio.write(this.pin, value);
 		};
 
 		this.writeSync = function(value) {

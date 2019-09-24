@@ -30,9 +30,9 @@ export default function interpreterLibrary (studio, device) {
 			}
 		};
 
-		let readSync = function() {
+		let readSync = function(pin) {
 			try {
-				console.log('readSync');
+				return generic_raspberrypi.dataLoaded[pin].value;
 			} catch(e) {
 				console.log(e);
 			}

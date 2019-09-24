@@ -237,6 +237,20 @@ let generic_raspberrypi = {
 				try {
 					if (this.schematicsData[name].data[pin].component === 'LED') {
 						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.schematicsData[name].data[pin].partID + '"] #color_path32').css({ fill: 'hsl(' + this.schematicsData[name].data[pin].color + ', 25%, 50%)' });
+					} else if (this.schematicsData[name].data[pin].component === 'BUTTON') {
+						this.schematicsData[name].data[pin].value = 0;
+
+						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.schematicsData[name].data[pin].partID + '"]').on('mousedown', () => {
+							this.schematicsData[name].data[pin].value = 1;
+						});
+
+						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.schematicsData[name].data[pin].partID + '"]').on('mouseup', () => {
+							this.schematicsData[name].data[pin].value = 0;
+						});
+
+						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.schematicsData[name].data[pin].partID + '"]').on('mouseout', () => {
+							this.schematicsData[name].data[pin].value = 0;
+						});
 					}
 				} catch(e) {
 					
