@@ -1,0 +1,14 @@
+{
+    "DEVICE_SIMULATOR_RASPBERRY_PI": {
+        "message": "Raspberry Pi Simulator",
+        "description": "The Raspberry Pi simulator tab button"
+    },
+    "DEVICE_SIMULATOR_RASPBERRY_PI_RUN": {
+        "message": "Run",
+        "description": "The Raspberry Pi simulator button to run"
+    },
+    "DEVICE_SIMULATOR_RASPBERRY_PI_STOP": {
+        "message": "Stop",
+        "description": "The Raspberry Pi simulator button to stop"
+    }
+}

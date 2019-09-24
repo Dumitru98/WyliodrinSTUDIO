@@ -44,7 +44,7 @@ function loadSerialPort ()
 	}
 	catch (e)
 	{
-		workspace.showError ('DEVICE_WYAPP_SERIAL_SERIAL_PORT_LOAD_ERROR', e.message);
+		// workspace.showError ('DEVICE_WYAPP_SERIAL_SERIAL_PORT_LOAD_ERROR', e.message);
 		return {
 			list: function ()
 			{
