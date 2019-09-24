@@ -64,6 +64,8 @@ export default {
 
 	watch: {
 		projectName(value) {
+			console.log(value);
+			
 			this.projectName = value;
 			this.projectData = generic_raspberrypi.loadSvg(value);
 

@@ -3,6 +3,7 @@ import $ from 'jquery';
 import raspberrypiData from './../data/schematics/data/raspberrypi.js';
 import raspberrypiWithLedData from './../data/schematics/data/raspberrypiWithLed.js';
 import raspberrypiWith3LedsData from './../data/schematics/data/raspberrypiWith3Leds.js';
+import raspberrypiWithButtonAndLedData from './../data/schematics/data/raspberrypiWithButtonAndLed.js';
 
 let generic_raspberrypi = {
 	name: 'Raspberry Pi 3 Model B v1.2',
@@ -203,6 +204,10 @@ let generic_raspberrypi = {
 		'raspberrypiWith3Leds': {
 			name: 'RaspberryPi With 3 Leds',
 			data: raspberrypiWith3LedsData
+		},
+		'raspberrypiWithButtonAndLed': {
+			name: 'RaspberryPi With Button and Led',
+			data: raspberrypiWithButtonAndLedData
 		}
 	},
 
