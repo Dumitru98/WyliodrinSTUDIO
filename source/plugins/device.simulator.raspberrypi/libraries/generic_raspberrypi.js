@@ -4,6 +4,7 @@ import raspberrypiData from './../data/schematics/data/raspberrypi.js';
 import raspberrypiWithLedData from './../data/schematics/data/raspberrypiWithLed.js';
 import raspberrypiWith3LedsData from './../data/schematics/data/raspberrypiWith3Leds.js';
 import raspberrypiWithButtonAndLedData from './../data/schematics/data/raspberrypiWithButtonAndLed.js';
+import raspberrypiWithPotentiometerAndLedData from './../data/schematics/data/raspberrypiWithPotentiometerAndLed.js';
 
 let generic_raspberrypi = {
 	name: 'Raspberry Pi 3 Model B v1.2',
@@ -208,6 +209,10 @@ let generic_raspberrypi = {
 		'raspberrypiWithButtonAndLed': {
 			name: 'RaspberryPi With Button and Led',
 			data: raspberrypiWithButtonAndLedData
+		},
+		'raspberrypiWithPotentiometerAndLed': {
+			name: 'RaspberryPi With Potentiometer and Led',
+			data: raspberrypiWithPotentiometerAndLedData
 		}
 	},
 
@@ -251,6 +256,10 @@ let generic_raspberrypi = {
 						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.schematicsData[name].data[pin].partID + '"]').on('mouseout', () => {
 							this.schematicsData[name].data[pin].value = 0;
 						});
+					} else if (this.schematicsData[name].data[pin].component === 'POTENTIOMETER') {
+						this.schematicsData[name].data[pin].value = 0;
+
+						
 					}
 				} catch(e) {
 					

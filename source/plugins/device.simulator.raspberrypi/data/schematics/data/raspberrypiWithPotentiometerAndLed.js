@@ -1,14 +1,14 @@
-let raspberrypiWithButtonAndLed = {
+let raspberrypiWithPotentiometerAndLed = {
 	0: null,
 	1: null,
 	2: {
 		pin: '2',
-		component: 'BUTTON',
+		component: 'POTENTIOMETER',
 		state: 'IN',
-		value: -1,
+		value: 0,
 		color: '-',
 		colorName: '-',
-		partID: '78630'
+		partID: '82550'
 	},
 	3: null,
 	4: null,
@@ -73,4 +73,4 @@ let raspberrypiWithButtonAndLed = {
 	39: null
 }
 
-export default raspberrypiWithButtonAndLed;
+export default raspberrypiWithPotentiometerAndLed;
