@@ -20,10 +20,18 @@
 		</template>
 
 		<div id="raspberrypi_svg"></div>
+
+		<div id="potentiometer_slider"></div>
+
+		<v-flex xs9 v-for="potentiometer in potentiometers" :key="potentiometer">
+            <v-slider :min="0" :max="255" thumb-label="always" label="Potentiometer"></v-slider>
+		</v-flex>
 	</div>
 </template>
 
 <script>
+import $ from 'jquery';
+
 import generic_raspberrypi from './../libraries/generic_raspberrypi.js';
 
 export default {
@@ -47,6 +55,7 @@ export default {
 				value: 'color'
 			}],
 			pinsTable: [],
+			potentiometers: [],
 
 			projects: null,
 
@@ -76,6 +85,10 @@ export default {
 						state: this.projectData[pinData].state,
 						color: this.projectData[pinData].colorName
 					})
+
+					if (this.projectData[pinData].component === 'POTENTIOMETER') {
+						this.potentiometers.push(this.projectData[pinData].partID);
+					}
 				}
 			}
 		}
