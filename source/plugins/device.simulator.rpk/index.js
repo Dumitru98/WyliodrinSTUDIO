@@ -95,10 +95,10 @@ export default function setup(options, imports, register) {
 				if (simulator.isRunning && interpreter.step()) {
 					simulator.opperationsCounter++;
 					if (simulator.opperationsCounter === 100) {
-						setTimeout(runToCompletion, 1000);
+						setTimeout(runToCompletion, 10);
 						simulator.opperationsCounter = 0;
 					} else {
-						setTimeout(runToCompletion, 5);
+						setTimeout(runToCompletion, 1);
 					}
 				} else {
 					simulator.isRunning = false;

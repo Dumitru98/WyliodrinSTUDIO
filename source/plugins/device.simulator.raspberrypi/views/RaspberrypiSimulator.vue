@@ -23,8 +23,8 @@
 
 		<div id="potentiometer_slider"></div>
 
-		<v-flex xs9 v-for="potentiometer in potentiometers" :key="potentiometer">
-            <v-slider :min="0" :max="255" thumb-label="always" label="Potentiometer"></v-slider>
+		<v-flex xs9>
+            <v-slider v-model="potentiometerData[potentiometer]" v-for="potentiometer in potentiometerSlider" :key="potentiometer" :min="0" :max="255" thumb-label="always" label="Potentiometer"></v-slider>
 		</v-flex>
 	</div>
 </template>
@@ -39,6 +39,7 @@ export default {
 
 	data() {
 		return {
+			pinsTable: [],
 			headersTable: [{
 				text: 'Pin',
 				align: 'left',
@@ -54,11 +55,11 @@ export default {
 				text: 'Color',
 				value: 'color'
 			}],
-			pinsTable: [],
-			potentiometers: [],
+
+			potentiometerSlider: [],
+			potentiometerData: [],
 
 			projects: null,
-
 			projectName: null,
 			projectData: null
 		}
@@ -77,6 +78,9 @@ export default {
 			this.projectData = generic_raspberrypi.loadSvg(value);
 
 			this.pinsTable = [];
+			this.potentiometerSlider = [];
+			this.potentiometerData = [];
+
 			for (let pinData of Object.keys(this.projectData)) {
 				if (this.projectData[pinData] !== null && this.projectData[pinData].state !== '0') {
 					this.pinsTable.push({
@@ -87,9 +91,16 @@ export default {
 					})
 
 					if (this.projectData[pinData].component === 'POTENTIOMETER') {
-						this.potentiometers.push(this.projectData[pinData].partID);
+						this.potentiometerSlider.push(this.projectData[pinData].pin);
+						this.potentiometerData[this.projectData[pinData].pin] = 0;
 					}
 				}
+			}
+		},
+
+		potentiometerData(value) {
+			for (let pin of this.potentiometerSlider) {
+				this.projectData[pin].value = this.potentiometerData[pin];
 			}
 		}
 	},
