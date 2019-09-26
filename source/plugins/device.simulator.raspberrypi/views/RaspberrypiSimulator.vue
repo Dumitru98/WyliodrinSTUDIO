@@ -1,28 +1,25 @@
 <template>
 	<div>
-		<v-menu>
-			<template v-slot:activator="{ on: menu }">
-				<v-tooltip bottom>
-					<template v-slot:activator="{ on: tooltip }">
-						<v-btn color="primary" dark v-on="{ ...tooltip, ...menu }">Projects</v-btn>
-					</template>
-				</v-tooltip>
-			</template>
+		<v-btn icon color="red" rounded dark @click.stop="projectsList = !projectsList"><v-icon color="blue darken-2">widgets</v-icon></v-btn>
+		<v-navigation-drawer v-model="projectsList" absolute temporary width="500" dark>
 			<v-list>
-				<v-list-item v-for="(project, index) in projects" :key="index" @click="projectName = index">
+				<v-list-item v-for="(project, index) in projects" :key="index" @click="projectName = index; projectsList = !projectsList">
 					<v-list-item-title>{{ project }}</v-list-item-title>
+					<v-list-item-avatar size="150">
+						<v-img :src="svgPath + index + '.svg'"></v-img>
+					</v-list-item-avatar>
 				</v-list-item>
 			</v-list>
-		</v-menu>
+		</v-navigation-drawer>
 
 		<template>
-			<v-data-table dense :headers="headerTable" :items="pinTable" item-key="pin" class="elevation-1"></v-data-table>
+			<v-data-table v-show="pinTable.length !== 0" dense hide-default-footer no-data-text="There is no pin assigned!" :headers="headerTable" :items="pinTable" item-key="pin" class="elevation-1"></v-data-table>
 		</template>
 
 		<div id="raspberrypi_svg"></div>
 
 		<v-flex xs9>
-            <v-slider v-model="potentiometerData[potentiometer]" v-for="potentiometer in potentiometerSlider" :key="potentiometer" :min="0" :max="255" thumb-label="always" label="Potentiometer"></v-slider>
+            <v-slider @mousedown="highlightPotentiometer(potentiometer)" v-model="potentiometerData[potentiometer]" v-for="potentiometer in potentiometerSlider" :key="potentiometer" :min="0" :max="255" thumb-label="always" label="Potentiometer"></v-slider>
 		</v-flex>
 	</div>
 </template>
@@ -37,6 +34,9 @@ export default {
 
 	data() {
 		return {
+			projectsList: false,
+			svgPath: './plugins/device.simulator.raspberrypi/data/schematics/svg/',
+
 			pinTable: [],
 			headerTable: [{
 				text: 'Pin',
@@ -104,6 +104,15 @@ export default {
 		}
 	},
 
-	methods: {}
+	methods: {
+		highlightPotentiometer(pin) {
+			try {
+				$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.projectData[pin].partID + '"]').hide(250);
+				$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.projectData[pin].partID + '"]').show(250);
+			} catch(e) {
+				console.log(e);
+			}
+		}
+	}
 }
 </script>

@@ -16,6 +16,14 @@ let generic_raspberrypi = {
 	pwmPins: [31, 32, 34],
 	i2cPins: [2, 4],
 
+	schematicsData: {
+		'raspberrypi': raspberrypiData,
+		'raspberrypiWithLed': raspberrypiWithLedData,
+		'raspberrypiWith3Leds': raspberrypiWith3LedsData,
+		'raspberrypiWithButtonAndLed': raspberrypiWithButtonAndLedData,
+		'raspberrypiWithPotentiometerAndLed': raspberrypiWithPotentiometerAndLedData
+	},
+
 	ledColors: {
 		red: 'h0, 25%, 50%)',
 		orange: 'hsl(37, 25%, 50%)',
@@ -193,14 +201,6 @@ let generic_raspberrypi = {
 		}
 	},
 
-	schematicsData: {
-		'raspberrypi': raspberrypiData,
-		'raspberrypiWithLed': raspberrypiWithLedData,
-		'raspberrypiWith3Leds': raspberrypiWith3LedsData,
-		'raspberrypiWithButtonAndLed': raspberrypiWithButtonAndLedData,
-		'raspberrypiWithPotentiometerAndLed': raspberrypiWithPotentiometerAndLedData
-	},
-
 	loadSvg: function(name) {
 		try {
 			// Save SVG and data loaded
@@ -224,28 +224,26 @@ let generic_raspberrypi = {
 
 			// Set LEDs to off
 			for (let pin of Object.keys(this.dataLoaded)) {
-				try {
-					if (this.dataLoaded[pin].component === 'LED') {
-						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"] #color_path32').css({ fill: 'hsl(' + this.dataLoaded[pin].color + ', 25%, 50%)' });
-					} else if (this.dataLoaded[pin].component === 'BUTTON') {
+				if (this.dataLoaded[pin].component === 'LED') {
+					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"] #color_path32').css({ fill: 'hsl(' + this.dataLoaded[pin].color + ', 25%, 50%)' });
+				} else if (this.dataLoaded[pin].component === 'BUTTON') {
+					this.dataLoaded[pin].value = 0;
+
+					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mousedown', () => {
+						this.dataLoaded[pin].value = 1;
+					});
+
+					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mouseup', () => {
 						this.dataLoaded[pin].value = 0;
+					});
 
-						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mousedown', () => {
-							this.dataLoaded[pin].value = 1;
-						});
-
-						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mouseup', () => {
-							this.dataLoaded[pin].value = 0;
-						});
-
-						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mouseout', () => {
-							this.dataLoaded[pin].value = 0;
-						});
-					} else if (this.dataLoaded[pin].component === 'POTENTIOMETER') {
+					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mouseout', () => {
 						this.dataLoaded[pin].value = 0;
-					}
-				} catch(e) {
-					
+					});
+
+					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').css('cursor', 'pointer');
+				} else if (this.dataLoaded[pin].component === 'POTENTIOMETER') {
+					this.dataLoaded[pin].value = 0;
 				}
 			}
 
