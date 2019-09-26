@@ -19,7 +19,7 @@
 		<div id="raspberrypi_svg"></div>
 
 		<v-flex xs9>
-            <v-slider @mousedown="highlightPotentiometer(potentiometer)" v-model="potentiometerData[potentiometer]" v-for="potentiometer in potentiometerSlider" :key="potentiometer" :min="0" :max="255" thumb-label="always" label="Potentiometer"></v-slider>
+            <v-slider id="test" @mousedown="highlightPotentiometer(potentiometer)" v-model="potentiometerData[potentiometer]" v-for="potentiometer in potentiometerSlider" :key="potentiometer" :min="0" :max="255" thumb-label="always" label="Potentiometer"></v-slider>
 		</v-flex>
 	</div>
 </template>
@@ -73,8 +73,9 @@ export default {
 
 	watch: {
 		projectName(name) {
-			this.projectName = name;
-			this.projectData = generic_raspberrypi.loadSvg(name);
+			// this.projectName = name;
+			generic_raspberrypi.loadSvg(name);
+			this.projectData = generic_raspberrypi.dataLoaded;
 
 			this.pinTable = [];
 			this.potentiometerSlider = [];

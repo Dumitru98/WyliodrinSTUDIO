@@ -5,8 +5,9 @@ ToDo-List:
 		- Daca pe pinul respectiv poate fi scris respectiv citit
 		- In cazul in care nu exista functia sa nu crape programul
 	* Work:
-		- De afisat imaginea cu proiectul de la inceput
-		- De facut o lista de unde poate fi ales proiectul
-		- De documentat functiile
+		- De citit documentatie de la onoff pentru
+			* scris PWM (led)
+			* citit PWM (potentiometru)
+		- De inceput sa scriu restul functionalitatilor
 
 DE DECOMENTAT LINIA 47 DIN device.rpk/index.js

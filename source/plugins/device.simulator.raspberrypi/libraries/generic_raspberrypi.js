@@ -224,30 +224,30 @@ let generic_raspberrypi = {
 
 			// Set LEDs to off
 			for (let pin of Object.keys(this.dataLoaded)) {
-				if (this.dataLoaded[pin].component === 'LED') {
-					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"] #color_path32').css({ fill: 'hsl(' + this.dataLoaded[pin].color + ', 25%, 50%)' });
-				} else if (this.dataLoaded[pin].component === 'BUTTON') {
-					this.dataLoaded[pin].value = 0;
-
-					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mousedown', () => {
-						this.dataLoaded[pin].value = 1;
-					});
-
-					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mouseup', () => {
+				if (this.dataLoaded[pin] !== null) {
+					if (this.dataLoaded[pin].component === 'LED') {
+						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"] #color_path32').css({ fill: 'hsl(' + this.dataLoaded[pin].color + ', 25%, 50%)' });
+					} else if (this.dataLoaded[pin].component === 'BUTTON') {
 						this.dataLoaded[pin].value = 0;
-					});
 
-					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mouseout', () => {
+						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mousedown', () => {
+							this.dataLoaded[pin].value = 1;
+						});
+
+						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mouseup', () => {
+							this.dataLoaded[pin].value = 0;
+						});
+
+						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mouseout', () => {
+							this.dataLoaded[pin].value = 0;
+						});
+
+						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').css('cursor', 'pointer');
+					} else if (this.dataLoaded[pin].component === 'POTENTIOMETER') {
 						this.dataLoaded[pin].value = 0;
-					});
-
-					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').css('cursor', 'pointer');
-				} else if (this.dataLoaded[pin].component === 'POTENTIOMETER') {
-					this.dataLoaded[pin].value = 0;
+					}
 				}
 			}
-
-			return this.dataLoaded;
 		} catch(e) {
 			console.log(e);
 		}
