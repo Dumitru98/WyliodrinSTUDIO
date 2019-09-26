@@ -194,33 +194,18 @@ let generic_raspberrypi = {
 	},
 
 	schematicsData: {
-		'raspberrypi': {
-			name: 'RaspberryPi',
-			data: raspberrypiData
-		},
-		'raspberrypiWithLed': {
-			name: 'RaspberryPi With Led',
-			data: raspberrypiWithLedData
-		},
-		'raspberrypiWith3Leds': {
-			name: 'RaspberryPi With 3 Leds',
-			data: raspberrypiWith3LedsData
-		},
-		'raspberrypiWithButtonAndLed': {
-			name: 'RaspberryPi With Button and Led',
-			data: raspberrypiWithButtonAndLedData
-		},
-		'raspberrypiWithPotentiometerAndLed': {
-			name: 'RaspberryPi With Potentiometer and Led',
-			data: raspberrypiWithPotentiometerAndLedData
-		}
+		'raspberrypi': raspberrypiData,
+		'raspberrypiWithLed': raspberrypiWithLedData,
+		'raspberrypiWith3Leds': raspberrypiWith3LedsData,
+		'raspberrypiWithButtonAndLed': raspberrypiWithButtonAndLedData,
+		'raspberrypiWithPotentiometerAndLed': raspberrypiWithPotentiometerAndLedData
 	},
 
 	loadSvg: function(name) {
 		try {
 			// Save SVG and data loaded
 			this.svgLoaded = name;
-			this.dataLoaded = this.schematicsData[name].data;
+			this.dataLoaded = this.schematicsData[name].pins;
 
 			// Load SVG file
 			let svgPath = this.svgGenericPath + name + '.svg';
@@ -238,33 +223,33 @@ let generic_raspberrypi = {
 			}
 
 			// Set LEDs to off
-			for (let pin of Object.keys(this.schematicsData[name].data)) {
+			for (let pin of Object.keys(this.dataLoaded)) {
 				try {
-					if (this.schematicsData[name].data[pin].component === 'LED') {
-						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.schematicsData[name].data[pin].partID + '"] #color_path32').css({ fill: 'hsl(' + this.schematicsData[name].data[pin].color + ', 25%, 50%)' });
-					} else if (this.schematicsData[name].data[pin].component === 'BUTTON') {
-						this.schematicsData[name].data[pin].value = 0;
+					if (this.dataLoaded[pin].component === 'LED') {
+						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"] #color_path32').css({ fill: 'hsl(' + this.dataLoaded[pin].color + ', 25%, 50%)' });
+					} else if (this.dataLoaded[pin].component === 'BUTTON') {
+						this.dataLoaded[pin].value = 0;
 
-						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.schematicsData[name].data[pin].partID + '"]').on('mousedown', () => {
-							this.schematicsData[name].data[pin].value = 1;
+						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mousedown', () => {
+							this.dataLoaded[pin].value = 1;
 						});
 
-						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.schematicsData[name].data[pin].partID + '"]').on('mouseup', () => {
-							this.schematicsData[name].data[pin].value = 0;
+						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mouseup', () => {
+							this.dataLoaded[pin].value = 0;
 						});
 
-						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.schematicsData[name].data[pin].partID + '"]').on('mouseout', () => {
-							this.schematicsData[name].data[pin].value = 0;
+						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mouseout', () => {
+							this.dataLoaded[pin].value = 0;
 						});
-					} else if (this.schematicsData[name].data[pin].component === 'POTENTIOMETER') {
-						this.schematicsData[name].data[pin].value = 0;
+					} else if (this.dataLoaded[pin].component === 'POTENTIOMETER') {
+						this.dataLoaded[pin].value = 0;
 					}
 				} catch(e) {
 					
 				}
 			}
 
-			return this.schematicsData[name].data;
+			return this.dataLoaded;
 		} catch(e) {
 			console.log(e);
 		}
