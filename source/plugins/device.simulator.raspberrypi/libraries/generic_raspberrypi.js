@@ -258,8 +258,6 @@ let generic_raspberrypi = {
 						});
 					} else if (this.schematicsData[name].data[pin].component === 'POTENTIOMETER') {
 						this.schematicsData[name].data[pin].value = 0;
-
-						
 					}
 				} catch(e) {
 					

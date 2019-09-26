@@ -24,7 +24,7 @@
 		<div id="potentiometer_slider"></div>
 
 		<v-flex xs9>
-            <v-slider v-model="potentiometerData[potentiometer]" v-for="potentiometer in potentiometerSlider" :key="potentiometer" :min="0" :max="255" thumb-label="always" label="Potentiometer"></v-slider>
+            <v-slider @mouseover="potentiometerHover[potentiometer] = true" @mouseleave="potentiometerHover[potentiometer] = false" v-model="potentiometerData[potentiometer]" v-for="potentiometer in potentiometerSlider" :key="potentiometer" :min="0" :max="255" thumb-label="always" label="Potentiometer"></v-slider>
 		</v-flex>
 	</div>
 </template>
@@ -93,6 +93,8 @@ export default {
 					if (this.projectData[pinData].component === 'POTENTIOMETER') {
 						this.potentiometerSlider.push(this.projectData[pinData].pin);
 						this.potentiometerData[this.projectData[pinData].pin] = 0;
+
+						// ca la switches
 					}
 				}
 			}
