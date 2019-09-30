@@ -8,6 +8,7 @@ let raspberrypiWithPotentiometerAndLed = {
 			component: 'POTENTIOMETER',
 			state: 'IN',
 			value: 0,
+			egde: '-',
 			color: '-',
 			colorName: '-',
 			partID: '82550'
@@ -22,6 +23,7 @@ let raspberrypiWithPotentiometerAndLed = {
 			component: 'LED',
 			state: 'OUT',
 			value: 0,
+			egde: '-',
 			color: '0',
 			colorName: 'RED',
 			partID: '80620'

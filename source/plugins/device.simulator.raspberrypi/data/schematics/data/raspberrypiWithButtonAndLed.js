@@ -8,6 +8,7 @@ let raspberrypiWithButtonAndLed = {
 			component: 'BUTTON',
 			state: 'IN',
 			value: -1,
+			egde: 'rising',
 			color: '-',
 			colorName: '-',
 			partID: '78630'
@@ -22,6 +23,7 @@ let raspberrypiWithButtonAndLed = {
 			component: 'LED',
 			state: 'OUT',
 			value: 0,
+			egde: '-',
 			color: '0',
 			colorName: 'RED',
 			partID: '80620'

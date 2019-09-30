@@ -22,7 +22,16 @@ export default function interpreterLibrary (studio, device) {
 			}, delay);
 		};
 
-		let read = function() {
+		let create = function(pin, type, edge) {
+			if (type) {
+				generic_raspberrypi.dataLoaded[pin].type = type;
+			}
+			if (edge) {
+				generic_raspberrypi.dataLoaded[pin].type = edge;
+			}
+		};
+
+		let read = function(type, pin) {
 			try {
 				console.log('read');
 			} catch(e) {
@@ -30,7 +39,7 @@ export default function interpreterLibrary (studio, device) {
 			}
 		};
 
-		let readSync = function(pin) {
+		let readSync = function(type, pin) {
 			try {
 				return generic_raspberrypi.dataLoaded[pin].value;
 			} catch(e) {
@@ -38,7 +47,7 @@ export default function interpreterLibrary (studio, device) {
 			}
 		};
 
-		let write = function(value) {
+		let write = function(pin, type, value) {
 			try {
 				console.log('write ' + value.toString());
 			} catch(e) {
@@ -46,13 +55,15 @@ export default function interpreterLibrary (studio, device) {
 			}
 		};
 
-		let writeSync = function(pin, value) {
+		let writeSync = function(pin, type, value) {
 			try {
 				if (value) {
 					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + generic_raspberrypi.dataLoaded[pin].partID + '"] #color_path32').css({ fill: 'hsl(' + generic_raspberrypi.dataLoaded[pin].color + ', 100%, 50%)' });
 				} else {
 					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + generic_raspberrypi.dataLoaded[pin].partID + '"] #color_path32').css({ fill: 'hsl(' + generic_raspberrypi.dataLoaded[pin].color + ', 25%, 50%)' });
 				}
+
+				generic_raspberrypi.dataLoaded[pin].value = value;
 			} catch(e) {
 				console.log(e);
 			}
@@ -124,6 +135,7 @@ export default function interpreterLibrary (studio, device) {
 		let Gpio = interpreter.createObjectProto(interpreter.OBJECT_PROTO);
 		interpreter.setProperty(scope, 'onoff', onoff);
 		interpreter.setProperty(onoff, 'Gpio', Gpio);
+		interpreter.setProperty(Gpio, 'create', interpreter.createNativeFunction(create));
 		interpreter.setProperty(Gpio, 'read', interpreter.createNativeFunction(read));
 		interpreter.setProperty(Gpio, 'readSync', interpreter.createNativeFunction(readSync));
 		interpreter.setProperty(Gpio, 'write', interpreter.createNativeFunction(write));

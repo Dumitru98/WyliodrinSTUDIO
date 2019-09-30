@@ -3,6 +3,7 @@
 		<v-btn icon color="red" rounded dark @click.stop="projectsList = !projectsList"><v-icon color="blue darken-2">widgets</v-icon></v-btn>
 		<v-navigation-drawer v-model="projectsList" absolute temporary width="500" dark>
 			<v-list>
+				<v-btn height="70" block>LOAD PROJECT</v-btn>
 				<v-list-item v-for="(project, index) in projects" :key="index" @click="projectName = index; projectsList = !projectsList">
 					<v-list-item-title>{{ project }}</v-list-item-title>
 					<v-list-item-avatar size="150">
@@ -26,6 +27,7 @@
 
 <script>
 import $ from 'jquery';
+import generate_project_json from './../libraries/generate_project_json.js'
 
 import generic_raspberrypi from './../libraries/generic_raspberrypi.js';
 
@@ -69,11 +71,25 @@ export default {
 		}
 
 		this.projectName = generic_raspberrypi.svgLoaded;
+
+		console.log('Aici fac incarcarea si parsarea de xml\n\n\n');
+
+		// Examples:
+		// let xmlPath = './plugins/device.simulator.raspberrypi/data/schematics/netlist/3LedsAndButton.xml';
+		// let xmlPath = './plugins/device.simulator.raspberrypi/data/schematics/netlist/ledAndPotentiometer.xml';
+		let xmlPath = './plugins/device.simulator.raspberrypi/data/schematics/netlist/test.xml';
+		let xhr = new XMLHttpRequest();
+
+		xhr.open('GET', xmlPath, false);
+		xhr.overrideMimeType('image/svg+xml');
+		xhr.send('');
+
+		let obj = generate_project_json(xhr.responseXML.documentElement);
+		console.log(obj);
 	},
 
 	watch: {
 		projectName(name) {
-			// this.projectName = name;
 			generic_raspberrypi.loadSvg(name);
 			this.projectData = generic_raspberrypi.dataLoaded;
 
@@ -108,8 +124,8 @@ export default {
 	methods: {
 		highlightPotentiometer(pin) {
 			try {
-				$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.projectData[pin].partID + '"]').hide(250);
-				$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.projectData[pin].partID + '"]').show(250);
+				$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.projectData[pin].partID + '"]').hide(300);
+				$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.projectData[pin].partID + '"]').show(300);
 			} catch(e) {
 				console.log(e);
 			}

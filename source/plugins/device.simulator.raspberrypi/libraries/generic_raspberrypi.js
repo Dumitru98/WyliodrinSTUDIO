@@ -25,7 +25,7 @@ let generic_raspberrypi = {
 	},
 
 	ledColors: {
-		red: 'h0, 25%, 50%)',
+		red: 'hsl(0, 25%, 50%)',
 		orange: 'hsl(37, 25%, 50%)',
 		yellow: 'hsl(58, 25%, 50%)',
 		green: 'hsl(117, 25%, 50%)',
@@ -33,169 +33,169 @@ let generic_raspberrypi = {
 	},
 
 	pins: {
-		pin0: {
+		0: {
 			name: '3.3V',
 			states: ['3.3']
 		},
-		pin1: {
+		1: {
 			name: '5V',
 			states: ['5']
 		},
-		pin2: {
+		2: {
 			name: 'GPIO2',
 			states: ['IN', 'OUT', 'I2C_SDA']
 		},
-		pin3: {
+		3: {
 			name: '5V',
 			states: ['5']
 		},
-		pin4: {
+		4: {
 			name: 'GPIO3',
 			states: ['IN', 'OUT', 'I2C_SCL']
 		},
-		pin5: {
+		5: {
 			name: 'GND',
 			states: ['0']
 		},
-		pin6: {
+		6: {
 			name: 'GPIO4',
 			states: ['IN', 'OUT', 'SPI_CLK']
 		},
-		pin7: {
+		7: {
 			name: 'GPIO14',
 			states: ['IN', 'OUT']
 		},
-		pin8: {
+		8: {
 			name: 'GND',
 			states: ['0']
 		},
-		pin9: {
+		9: {
 			name: 'GPIO15',
 			states: ['IN', 'OUT']
 		},
 
 
-		pin10: {
+		10: {
 			name: 'GPIO17',
 			states: ['IN', 'OUT']
 		},
-		pin11: {
+		11: {
 			name: 'GPIO18',
 			states: ['IN', 'OUT', 'SPI_CLK', 'PWM']
 		},
-		pin12: {
+		12: {
 			name: 'GPIO27',
 			states: ['IN', 'OUT']
 		},
-		pin13: {
+		13: {
 			name: 'GND',
 			states: ['0']
 		},
-		pin14: {
+		14: {
 			name: 'GPIO22',
 			states: ['IN', 'OUT']
 		},
-		pin15: {
+		15: {
 			name: 'GPIO23',
 			states: ['IN', 'OUT']
 		},
-		pin16: {
+		16: {
 			name: '3.3V',
 			states: ['3.3']
 		},
-		pin17: {
+		17: {
 			name: 'GPIO24',
 			states: ['IN', 'OUT']
 		},
-		pin18: {
+		18: {
 			name: 'GPIO10',
 			states: ['IN', 'OUT', 'SPI_MOSI']
 		},
-		pin19: {
+		19: {
 			name: 'GND',
 			states: ['0']
 		},
 
 
-		pin20: {
+		20: {
 			name: 'GPIO9',
 			states: ['IN', 'OUT', 'SPI_MOSI']
 		},
-		pin21: {
+		21: {
 			name: 'GPIO25',
 			states: ['IN', 'OUT']
 		},
-		pin22: {
+		22: {
 			name: 'GPIO11',
 			states: ['IN', 'OUT', 'SPI_CLK']
 		},
-		pin23: {
+		23: {
 			name: 'GPIO8',
 			states: ['IN', 'OUT', 'SPI_SS']
 		},
-		pin24: {
+		24: {
 			name: 'GND',
 			states: ['0']
 		},
-		pin25: {
+		25: {
 			name: 'GPIO7',
 			states: ['IN', 'OUT', 'SPI_SS']
 		},
-		pin26: {
+		26: {
 			name: 'ID_SD',
 			states: ['I2C_SDA']
 		},
-		pin27: {
+		27: {
 			name: 'ID_SC',
 			states: ['I2C_SCL']
 		},
-		pin28: {
+		28: {
 			name: 'GPIO5',
 			states: ['IN', 'OUT', 'SPI_CLK']
 		},
-		pin29: {
+		29: {
 			name: 'GND',
 			states: ['0']
 		},
 
 
-		pin30: {
+		30: {
 			name: 'GPIO6',
 			states: ['IN', 'OUT', 'SPI_CLK']
 		},
-		pin31: {
+		31: {
 			name: 'GPIO12',
 			states: ['IN', 'OUT', 'PWM']
 		},
-		pin32: {
+		32: {
 			name: 'GPIO13',
 			states: ['IN', 'OUT', 'PWM']
 		},
-		pin33: {
+		33: {
 			name: 'GND',
 			states: ['0']
 		},
-		pin34: {
+		34: {
 			name: 'GPIO19',
 			states: ['IN', 'OUT', 'PWM']
 		},
-		pin35: {
+		35: {
 			name: 'GPIO16',
 			states: ['IN', 'OUT']
 		},
-		pin36: {
+		36: {
 			name: 'GPIO26',
 			states: ['IN', 'OUT']
 		},
-		pin37: {
+		37: {
 			name: 'GPIO20',
 			states: ['IN', 'OUT']
 		},
-		pin38: {
+		38: {
 			name: 'GND',
 			states: ['0']
 		},
-		pin39: {
+		39: {
 			name: 'GPIO21',
 			states: ['IN', 'OUT']
 		}
