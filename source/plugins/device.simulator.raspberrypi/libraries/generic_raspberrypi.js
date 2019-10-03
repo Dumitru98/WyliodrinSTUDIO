@@ -1,35 +1,31 @@
 import $ from 'jquery';
+import generate_project_json from './generate_project_json.js';
 
-import raspberrypiData from './../data/schematics/data/raspberrypi.js';
-import raspberrypiWithLedData from './../data/schematics/data/raspberrypiWithLed.js';
-import raspberrypiWith3LedsData from './../data/schematics/data/raspberrypiWith3Leds.js';
-import raspberrypiWithButtonAndLedData from './../data/schematics/data/raspberrypiWithButtonAndLed.js';
-import raspberrypiWithPotentiometerAndLedData from './../data/schematics/data/raspberrypiWithPotentiometerAndLed.js';
+// import raspberrypiData from './../data/schematics/data/raspberrypi.js';
+// import raspberrypiWithLedData from './../data/schematics/data/raspberrypiWithLed.js';
+// import raspberrypiWith3LedsData from './../data/schematics/data/raspberrypiWith3Leds.js';
+// import raspberrypiWithButtonAndLedData from './../data/schematics/data/raspberrypiWithButtonAndLed.js';
+// import raspberrypiWithPotentiometerAndLedData from './../data/schematics/data/raspberrypiWithPotentiometerAndLed.js';
 
 let generic_raspberrypi = {
 	name: 'Raspberry Pi 3 Model B v1.2',
 	svgGenericPath: './plugins/device.simulator.raspberrypi/data/schematics/svg/',
-	svgLoaded: 'raspberrypi',
-	dataLoaded: raspberrypiData,
+	xmlGenericPath: './plugins/device.simulator.raspberrypi/data/schematics/xml/',
+	svgLoaded: 'testLedAndButton',
+	dataLoaded: null,
 	vccPins: [0, 1, 3, 16],
 	gndPins: [5, 8, 13, 19, 24, 29, 33, 38],
 	pwmPins: [31, 32, 34],
 	i2cPins: [2, 4],
 
-	schematicsData: {
-		'raspberrypi': raspberrypiData,
-		'raspberrypiWithLed': raspberrypiWithLedData,
-		'raspberrypiWith3Leds': raspberrypiWith3LedsData,
-		'raspberrypiWithButtonAndLed': raspberrypiWithButtonAndLedData,
-		'raspberrypiWithPotentiometerAndLed': raspberrypiWithPotentiometerAndLedData
-	},
+	projectsName: {},
 
 	ledColors: {
-		red: 'hsl(0, 25%, 50%)',
-		orange: 'hsl(37, 25%, 50%)',
-		yellow: 'hsl(58, 25%, 50%)',
-		green: 'hsl(117, 25%, 50%)',
-		blue: 'hsl(230, 25%, 50%)'
+		'red': 0,
+		'orange': 37,
+		'yellow': 58,
+		'green': 117,
+		'blue': 230
 	},
 
 	pins: {
@@ -42,7 +38,7 @@ let generic_raspberrypi = {
 			states: ['5']
 		},
 		2: {
-			name: 'GPIO2',
+			name: 'GIPO2',
 			states: ['IN', 'OUT', 'I2C_SDA']
 		},
 		3: {
@@ -50,7 +46,7 @@ let generic_raspberrypi = {
 			states: ['5']
 		},
 		4: {
-			name: 'GPIO3',
+			name: 'GIPO3',
 			states: ['IN', 'OUT', 'I2C_SCL']
 		},
 		5: {
@@ -58,11 +54,11 @@ let generic_raspberrypi = {
 			states: ['0']
 		},
 		6: {
-			name: 'GPIO4',
+			name: 'GIPO4',
 			states: ['IN', 'OUT', 'SPI_CLK']
 		},
 		7: {
-			name: 'GPIO14',
+			name: 'GIPO14',
 			states: ['IN', 'OUT']
 		},
 		8: {
@@ -70,21 +66,21 @@ let generic_raspberrypi = {
 			states: ['0']
 		},
 		9: {
-			name: 'GPIO15',
+			name: 'GIPO15',
 			states: ['IN', 'OUT']
 		},
 
 
 		10: {
-			name: 'GPIO17',
+			name: 'GIPO17',
 			states: ['IN', 'OUT']
 		},
 		11: {
-			name: 'GPIO18',
+			name: 'GIPO18',
 			states: ['IN', 'OUT', 'SPI_CLK', 'PWM']
 		},
 		12: {
-			name: 'GPIO27',
+			name: 'GIPO27',
 			states: ['IN', 'OUT']
 		},
 		13: {
@@ -92,11 +88,11 @@ let generic_raspberrypi = {
 			states: ['0']
 		},
 		14: {
-			name: 'GPIO22',
+			name: 'GIPO22',
 			states: ['IN', 'OUT']
 		},
 		15: {
-			name: 'GPIO23',
+			name: 'GIPO23',
 			states: ['IN', 'OUT']
 		},
 		16: {
@@ -104,11 +100,11 @@ let generic_raspberrypi = {
 			states: ['3.3']
 		},
 		17: {
-			name: 'GPIO24',
+			name: 'GIPO24',
 			states: ['IN', 'OUT']
 		},
 		18: {
-			name: 'GPIO10',
+			name: 'GIPO10',
 			states: ['IN', 'OUT', 'SPI_MOSI']
 		},
 		19: {
@@ -118,19 +114,19 @@ let generic_raspberrypi = {
 
 
 		20: {
-			name: 'GPIO9',
+			name: 'GIPO9',
 			states: ['IN', 'OUT', 'SPI_MOSI']
 		},
 		21: {
-			name: 'GPIO25',
+			name: 'GIPO25',
 			states: ['IN', 'OUT']
 		},
 		22: {
-			name: 'GPIO11',
+			name: 'GIPO11',
 			states: ['IN', 'OUT', 'SPI_CLK']
 		},
 		23: {
-			name: 'GPIO8',
+			name: 'GIPO8',
 			states: ['IN', 'OUT', 'SPI_SS']
 		},
 		24: {
@@ -138,7 +134,7 @@ let generic_raspberrypi = {
 			states: ['0']
 		},
 		25: {
-			name: 'GPIO7',
+			name: 'GIPO7',
 			states: ['IN', 'OUT', 'SPI_SS']
 		},
 		26: {
@@ -150,7 +146,7 @@ let generic_raspberrypi = {
 			states: ['I2C_SCL']
 		},
 		28: {
-			name: 'GPIO5',
+			name: 'GIPO5',
 			states: ['IN', 'OUT', 'SPI_CLK']
 		},
 		29: {
@@ -160,15 +156,15 @@ let generic_raspberrypi = {
 
 
 		30: {
-			name: 'GPIO6',
+			name: 'GIPO6',
 			states: ['IN', 'OUT', 'SPI_CLK']
 		},
 		31: {
-			name: 'GPIO12',
+			name: 'GIPO12',
 			states: ['IN', 'OUT', 'PWM']
 		},
 		32: {
-			name: 'GPIO13',
+			name: 'GIPO13',
 			states: ['IN', 'OUT', 'PWM']
 		},
 		33: {
@@ -176,19 +172,19 @@ let generic_raspberrypi = {
 			states: ['0']
 		},
 		34: {
-			name: 'GPIO19',
+			name: 'GIPO19',
 			states: ['IN', 'OUT', 'PWM']
 		},
 		35: {
-			name: 'GPIO16',
+			name: 'GIPO16',
 			states: ['IN', 'OUT']
 		},
 		36: {
-			name: 'GPIO26',
+			name: 'GIPO26',
 			states: ['IN', 'OUT']
 		},
 		37: {
-			name: 'GPIO20',
+			name: 'GIPO20',
 			states: ['IN', 'OUT']
 		},
 		38: {
@@ -196,56 +192,119 @@ let generic_raspberrypi = {
 			states: ['0']
 		},
 		39: {
-			name: 'GPIO21',
+			name: 'GIPO21',
 			states: ['IN', 'OUT']
 		}
 	},
 
 	loadSvg: function(name) {
 		try {
-			// Save SVG and data loaded
 			this.svgLoaded = name;
-			this.dataLoaded = this.schematicsData[name].pins;
 
 			// Load SVG file
 			let svgPath = this.svgGenericPath + name + '.svg';
-			let xhr = new XMLHttpRequest();
+			let xhrSvg = new XMLHttpRequest();
 
-			xhr.open('GET', svgPath, false);
-			xhr.overrideMimeType('image/svg+xml');
-			xhr.send('');
+			xhrSvg.open('GET', svgPath, false);
+			xhrSvg.overrideMimeType('image/svg+xml');
+			xhrSvg.send('');
 
 			// Put SVG file in HTML component
 			if (document.getElementById('raspberrypi_svg').firstElementChild === null) {
-				document.getElementById('raspberrypi_svg').appendChild(xhr.responseXML.documentElement);
+				document.getElementById('raspberrypi_svg').appendChild(xhrSvg.responseXML.documentElement);
 			} else {
-				document.getElementById('raspberrypi_svg').replaceChild(xhr.responseXML.documentElement, document.getElementById('raspberrypi_svg').firstElementChild);
+				document.getElementById('raspberrypi_svg').replaceChild(xhrSvg.responseXML.documentElement, document.getElementById('raspberrypi_svg').firstElementChild);
 			}
 
-			// Set LEDs to off
-			for (let pin of Object.keys(this.dataLoaded)) {
-				if (this.dataLoaded[pin] !== null) {
-					if (this.dataLoaded[pin].component === 'LED') {
-						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"] #color_path32').css({ fill: 'hsl(' + this.dataLoaded[pin].color + ', 25%, 50%)' });
-					} else if (this.dataLoaded[pin].component === 'BUTTON') {
-						this.dataLoaded[pin].value = 0;
+			let xmlPath = this.xmlGenericPath + name + '.xml';
+			let xhrXml = new XMLHttpRequest();
 
-						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mousedown', () => {
-							this.dataLoaded[pin].value = 1;
-						});
+			xhrXml.open('GET', xmlPath, false);
+			xhrXml.overrideMimeType('image/svg+xml');
+			xhrXml.send('');
 
-						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mouseup', () => {
-							this.dataLoaded[pin].value = 0;
-						});
+			this.dataLoaded = generate_project_json(xhrXml.responseXML.documentElement, name);
 
-						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').on('mouseout', () => {
-							this.dataLoaded[pin].value = 0;
-						});
+			console.log(this.dataLoaded);
 
-						$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.dataLoaded[pin].partID + '"]').css('cursor', 'pointer');
-					} else if (this.dataLoaded[pin].component === 'POTENTIOMETER') {
-						this.dataLoaded[pin].value = 0;
+			// Initialize LEDs off
+			for (let component of Object.keys(this.dataLoaded.components)) {
+				if (this.dataLoaded.components[component].name === 'led') {
+					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"] #color_path32').css({ fill: 'hsl(' + this.ledColors[this.dataLoaded.components[component].color] + ', 25%, 50%)' });
+				}
+			}
+
+			// Initialize LEDs on for cases of direct voltage connections
+			for (let pin of Object.keys(this.dataLoaded.pins)) {
+				if ((this.dataLoaded.pins[pin].id === '3v3' || this.dataLoaded.pins[pin].id === '5v') && !this.dataLoaded.pins[pin].circuitInterruption) {
+					for (let component of Object.keys(this.dataLoaded.components)) {
+						if (this.dataLoaded.components[component].name) {
+							this.dataLoaded.components[component].active = true;
+							$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"] #color_path32').css({ fill: 'hsl(' + this.ledColors[this.dataLoaded.components[component].color] + ', 100%, 50%)' });
+						}
 					}
+				}
+			}
+
+			// Initialize BUTTONs functions
+			for (let component of Object.keys(this.dataLoaded.components)) {
+				if (this.dataLoaded.components[component].name === 'button') {
+					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"]').on('mousedown', () => {
+						this.dataLoaded.components[component].active = true;
+
+						for (let pin of Object.keys(this.dataLoaded.pins)) {
+							if (this.dataLoaded.pins[pin].components.indexOf(component) !== -1 && this.dataLoaded.pins[pin].state === 'out' && this.dataLoaded.pins[pin].value === 1) {
+								let closeCircuit = true;
+
+								for (let otherComponent of this.dataLoaded.pins[pin].components) {
+									if (otherComponent !== component && this.dataLoaded.components[otherComponent].name === 'button' && !this.dataLoaded.components[otherComponent].active) {
+										closeCircuit = false;
+									}
+								}
+
+								if (closeCircuit) {
+									for (let otherComponent of this.dataLoaded.pins[pin].components) {
+										if (this.dataLoaded.components[otherComponent].name === 'led') {
+											$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + otherComponent + '"] #color_path32').css({ fill: 'hsl(' + this.ledColors[this.dataLoaded.components[otherComponent].color] + ', 100%, 50%)' });
+											this.dataLoaded.components[otherComponent].active = true;
+										}
+									}
+								}
+							}
+						}
+					});
+
+					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"]').on('mouseup', () => {
+						this.dataLoaded.components[component].active = false;
+
+						for (let pin of Object.keys(this.dataLoaded.pins)) {
+							if (this.dataLoaded.pins[pin].components.indexOf(component) !== -1) {
+								for (let otherComponent of this.dataLoaded.pins[pin].components) {
+									if (otherComponent !== component && this.dataLoaded.components[otherComponent].name === 'led') {
+										$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + otherComponent + '"] #color_path32').css({ fill: 'hsl(' + this.ledColors[this.dataLoaded.components[otherComponent].color] + ', 25%, 50%)' });
+										this.dataLoaded.components[otherComponent].active = false;
+									}
+								}
+							}
+						}
+					});
+
+					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"]').on('mouseleave', () => {
+						this.dataLoaded.components[component].active = false;
+
+						for (let pin of Object.keys(this.dataLoaded.pins)) {
+							if (this.dataLoaded.pins[pin].components.indexOf(component) !== -1) {
+								for (let otherComponent of this.dataLoaded.pins[pin].components) {
+									if (otherComponent !== component && this.dataLoaded.components[otherComponent].name === 'led') {
+										$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + otherComponent + '"] #color_path32').css({ fill: 'hsl(' + this.ledColors[this.dataLoaded.components[otherComponent].color] + ', 25%, 50%)' });
+										this.dataLoaded.components[otherComponent].active = false;
+									}
+								}
+							}
+						}
+					});
+
+					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"]').css('cursor', 'pointer');
 				}
 			}
 		} catch(e) {

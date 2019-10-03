@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<v-btn icon color="red" rounded dark @click.stop="projectsList = !projectsList"><v-icon color="blue darken-2">widgets</v-icon></v-btn>
+		<!-- <v-btn icon color="red" rounded dark @click.stop="projectsList = !projectsList"><v-icon color="blue darken-2">widgets</v-icon></v-btn>
 		<v-navigation-drawer v-model="projectsList" absolute temporary width="500" dark>
 			<v-list>
 				<v-btn height="70" block>LOAD PROJECT</v-btn>
@@ -11,17 +11,13 @@
 					</v-list-item-avatar>
 				</v-list-item>
 			</v-list>
-		</v-navigation-drawer>
+		</v-navigation-drawer> -->
 
 		<template>
-			<v-data-table v-show="pinTable.length !== 0" dense hide-default-footer no-data-text="There is no pin assigned!" :headers="headerTable" :items="pinTable" item-key="pin" class="elevation-1"></v-data-table>
+			<v-data-table v-show="componentsTable.length !== 0" dense hide-default-footer no-data-text="There is no pin assigned!" :headers="headerTable" :items="componentsTable" item-key="pin" class="elevation-1"></v-data-table>
 		</template>
 
 		<div id="raspberrypi_svg"></div>
-
-		<v-flex xs9>
-            <v-slider id="test" @mousedown="highlightPotentiometer(potentiometer)" v-model="potentiometerData[potentiometer]" v-for="potentiometer in potentiometerSlider" :key="potentiometer" :min="0" :max="255" thumb-label="always" label="Potentiometer"></v-slider>
-		</v-flex>
 	</div>
 </template>
 
@@ -37,55 +33,32 @@ export default {
 	data() {
 		return {
 			projectsList: false,
-			svgPath: './plugins/device.simulator.raspberrypi/data/schematics/svg/',
 
-			pinTable: [],
+			componentsTable: [],
 			headerTable: [{
-				text: 'Pin',
+				text: 'Pins',
 				align: 'left',
 				sortable: false,
-				value: 'pin'
+				value: 'pins'
 			}, {
-				text: 'Component',
-				value: 'component'
-			}, {
-				text: 'State',
-				value: 'state'
+				text: 'Name',
+				value: 'name'
 			}, {
 				text: 'Color',
 				value: 'color'
 			}],
 
 			projectName: '',
-			projectData: {},
-			projects: {},
-
-			potentiometerSlider: [],
-			potentiometerData: [],
+			projectData: {}
 		}
 	},
 
 	created() {
-		for (let raspberrypiSchematic of Object.keys(generic_raspberrypi.schematicsData)) {
-			this.projects[raspberrypiSchematic] = generic_raspberrypi.schematicsData[raspberrypiSchematic].name;
-		}
+		// for (let raspberrypiSchematic of Object.keys(generic_raspberrypi.schematicsData)) {
+		// 	this.projects[raspberrypiSchematic] = generic_raspberrypi.schematicsData[raspberrypiSchematic].name;
+		// }
 
 		this.projectName = generic_raspberrypi.svgLoaded;
-
-		console.log('Aici fac incarcarea si parsarea de xml\n\n\n');
-
-		// Examples:
-		// let xmlPath = './plugins/device.simulator.raspberrypi/data/schematics/netlist/3LedsAndButton.xml';
-		// let xmlPath = './plugins/device.simulator.raspberrypi/data/schematics/netlist/ledAndPotentiometer.xml';
-		let xmlPath = './plugins/device.simulator.raspberrypi/data/schematics/netlist/test.xml';
-		let xhr = new XMLHttpRequest();
-
-		xhr.open('GET', xmlPath, false);
-		xhr.overrideMimeType('image/svg+xml');
-		xhr.send('');
-
-		let obj = generate_project_json(xhr.responseXML.documentElement);
-		console.log(obj);
 	},
 
 	watch: {
@@ -93,41 +66,40 @@ export default {
 			generic_raspberrypi.loadSvg(name);
 			this.projectData = generic_raspberrypi.dataLoaded;
 
-			this.pinTable = [];
-			this.potentiometerSlider = [];
-			this.potentiometerData = [];
+			this.componentsTable = [];
 
-			for (let pinID of Object.keys(this.projectData)) {
-				if (this.projectData[pinID] !== null && this.projectData[pinID].state !== '0') {
-					this.pinTable.push({
-						pin: this.projectData[pinID].pin,
-						component: this.projectData[pinID].component,
-						state: this.projectData[pinID].state,
-						color: this.projectData[pinID].colorName
-					})
+			for (let component of Object.keys(this.projectData.components)) {
+				let newComponent = {
+					pins: null,
+					name: null,
+					color: null
+				};
 
-					if (this.projectData[pinID].component === 'POTENTIOMETER') {
-						this.potentiometerSlider.push(this.projectData[pinID].pin);
-						this.potentiometerData[this.projectData[pinID].pin] = 0;
+				let pins = '';
+				for (let pin of Object.keys(this.projectData.pins)) {
+					console.log(this.projectData.pins[pin].components.indexOf(component) + ', ' + this.projectData.components[component].name);
+					if (this.projectData.pins[pin].components.includes(component)) {
+						if (pins === '') {
+							pins += pin;
+						} else {
+							pins += ', ';
+							pins += pin;
+						}
 					}
+
+					break;
 				}
-			}
-		},
 
-		potentiometerData() {
-			for (let pin of this.potentiometerSlider) {
-				this.projectData[pin].value = this.potentiometerData[pin];
-			}
-		}
-	},
+				newComponent.pins = pins.toUpperCase();
+				newComponent.name = this.projectData.components[component].name.toUpperCase();
 
-	methods: {
-		highlightPotentiometer(pin) {
-			try {
-				$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.projectData[pin].partID + '"]').hide(300);
-				$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + this.projectData[pin].partID + '"]').show(300);
-			} catch(e) {
-				console.log(e);
+				if (this.projectData.components[component].color) {
+					newComponent.color = this.projectData.components[component].color.toUpperCase();
+				} else {
+					newComponent.color = '-';
+				}
+
+				this.componentsTable.push(newComponent);
 			}
 		}
 	}

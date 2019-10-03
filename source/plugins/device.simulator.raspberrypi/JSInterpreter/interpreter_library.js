@@ -22,12 +22,9 @@ export default function interpreterLibrary (studio, device) {
 			}, delay);
 		};
 
-		let create = function(pin, type, edge) {
-			if (type) {
-				generic_raspberrypi.dataLoaded[pin].type = type;
-			}
-			if (edge) {
-				generic_raspberrypi.dataLoaded[pin].type = edge;
+		let create = function(pin, state) {
+			if (state && generic_raspberrypi.dataLoaded.pins[pin]) {
+				generic_raspberrypi.dataLoaded.pins[pin].state = state;
 			}
 		};
 
@@ -41,7 +38,19 @@ export default function interpreterLibrary (studio, device) {
 
 		let readSync = function(type, pin) {
 			try {
-				return generic_raspberrypi.dataLoaded[pin].value;
+				let activeCircuit = true;
+
+				for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+					if (generic_raspberrypi.components[component].active === false) {
+						activeCircuit = false;
+					}
+				}
+
+				if (activeCircuit) {
+					return 1;
+				} else {
+					return 0;
+				}
 			} catch(e) {
 				console.log(e);
 			}
@@ -57,13 +66,33 @@ export default function interpreterLibrary (studio, device) {
 
 		let writeSync = function(pin, type, value) {
 			try {
-				if (value) {
-					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + generic_raspberrypi.dataLoaded[pin].partID + '"] #color_path32').css({ fill: 'hsl(' + generic_raspberrypi.dataLoaded[pin].color + ', 100%, 50%)' });
-				} else {
-					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + generic_raspberrypi.dataLoaded[pin].partID + '"] #color_path32').css({ fill: 'hsl(' + generic_raspberrypi.dataLoaded[pin].color + ', 25%, 50%)' });
-				}
+				generic_raspberrypi.dataLoaded.pins[pin].value = value;
 
-				generic_raspberrypi.dataLoaded[pin].value = value;
+				if (generic_raspberrypi.dataLoaded.pins[pin].circuitInterruption === false) {
+					for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+						if (generic_raspberrypi.dataLoaded.components[component].name === 'led') {
+							generic_raspberrypi.dataLoaded.components[component].active = true;
+							$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"] #color_path32').css({ fill: 'hsl(' + generic_raspberrypi.ledColors[generic_raspberrypi.dataLoaded.components[component].color] + ', 100%, 50%)' });
+						}
+					}
+				} else {
+					let activeCircuit = true;
+
+					for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+						if (generic_raspberrypi.dataLoaded.components[component].active === false) {
+							activeCircuit = false;
+						}
+					}
+
+					if (activeCircuit) {
+						for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+							if (generic_raspberrypi.dataLoaded.components[component].name === 'led') {
+								generic_raspberrypi.dataLoaded.components[component].active = true;
+								$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"] #color_path32').css({ fill: 'hsl(' + generic_raspberrypi.ledColors[generic_raspberrypi.dataLoaded.components[component].color] + ', 100%, 50%)' });
+							}
+						}
+					}
+				}
 			} catch(e) {
 				console.log(e);
 			}
