@@ -125,9 +125,11 @@ export default function interpreterLibrary (studio, device) {
 			try {
 				generic_raspberrypi.dataLoaded.pins[pin].value = value;
 
+				console.log(generic_raspberrypi.dataLoaded.pins[pin].components);
+
 				// Check if the circuit associated to the given pin is valid
 				let validCircuit = true;
-				for (let component of Object.keys(generic_raspberrypi.dataLoaded.pins[pin].components)) {
+				for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
 					if (generic_raspberrypi.dataLoaded.components[component].valid === false) {
 						validCircuit = false;
 						break;
@@ -151,8 +153,7 @@ export default function interpreterLibrary (studio, device) {
 					if (activeCircuit) {
 						for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
 							if (generic_raspberrypi.dataLoaded.components[component].name === 'led') {
-								generic_raspberrypi.dataLoaded.components[component].active = true;
-								$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"] #color_path32').css({ fill: 'hsl(' + generic_raspberrypi.ledColors[generic_raspberrypi.dataLoaded.components[component].color] + ', 100%, 50%)' });
+								generic_raspberrypi.setLed(component, 1);
 							}
 						}
 					} 
@@ -160,8 +161,7 @@ export default function interpreterLibrary (studio, device) {
 					// Set the low value for every LED
 					for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
 						if (generic_raspberrypi.dataLoaded.components[component].name === 'led') {
-							generic_raspberrypi.dataLoaded.components[component].active = false;
-							$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"] #color_path32').css({ fill: 'hsl(' + generic_raspberrypi.ledColors[generic_raspberrypi.dataLoaded.components[component].color] + ', 25%, 50%)' });
+							generic_raspberrypi.setLed(component, 0);
 						}
 					}
 				}

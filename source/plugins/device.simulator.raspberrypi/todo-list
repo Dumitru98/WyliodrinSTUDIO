@@ -1,11 +1,8 @@
 ToDo-List:
 	* Failsafes:
-		- Modificarea culorii se face doar pe led
 		- In cazul in care nu exista functia sa nu crape programul
 	* Work:
 		- De refacut schitele pentru tutoriale
-		- De implementat parsarea netlist-ului
-		- De salvat si interpretat conexiunile dintre componente
 		- De vazut cum se poate implementa functia watch
 		- De vazut cum se poate scrie PWM pe led
 

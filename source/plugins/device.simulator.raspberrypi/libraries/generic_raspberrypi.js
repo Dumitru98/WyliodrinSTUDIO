@@ -5,7 +5,7 @@ let generic_raspberrypi = {
 	name: 'Raspberry Pi 3 Model B v1.2',
 	svgGenericPath: './plugins/device.simulator.raspberrypi/data/schematics/svg/',
 	xmlGenericPath: './plugins/device.simulator.raspberrypi/data/schematics/xml/',
-	svgLoaded: 'testBad2Leds',
+	svgLoaded: 'testLed',
 	dataLoaded: null,
 	vccPins: [0, 1, 3, 16],
 	gndPins: [5, 8, 13, 19, 24, 29, 33, 38],
@@ -195,6 +195,95 @@ let generic_raspberrypi = {
 	},
 
 	/**
+	 * Set the color and the value of the led
+	 * @param  {String} component The id of the led
+	 * @param  {Integer} value The value that the led should have, '0' of '1'
+	 */
+	setLed: function(component, value) {
+		if (value) {
+			this.dataLoaded.components[component].active = true;
+			$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"] #color_path32').css({ fill: 'hsl(' + this.ledColors[this.dataLoaded.components[component].color] + ', 100%, 50%)' });
+		} else {
+			this.dataLoaded.components[component].active = false;
+			$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"] #color_path32').css({ fill: 'hsl(' + this.ledColors[this.dataLoaded.components[component].color] + ', 25%, 50%)' });
+		}
+	},
+
+	/**
+	 * Set the functions of the button
+	 * @param  {String} component The id of the button
+	 */
+	setButton: function(component) {
+		this.dataLoaded.components[component].active = false;
+
+		// Function for pressing the button
+		$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"]').on('mousedown', () => {
+			this.dataLoaded.components[component].active = true;
+
+			for (let pin of Object.keys(this.dataLoaded.pins)) {
+				if (this.dataLoaded.pins[pin].components.indexOf(component) !== -1 && this.dataLoaded.pins[pin].state === 'out' && this.dataLoaded.pins[pin].value === 1) {
+
+					// Check if the full circuit is active
+					let closeCircuit = true;
+					for (let otherComponent of this.dataLoaded.pins[pin].components) {
+						if (otherComponent !== component && this.dataLoaded.components[otherComponent].name === 'button' && this.dataLoaded.components[otherComponent].active === false) {
+							closeCircuit = false;
+							break;
+						}
+					}
+
+					// If the circuit is active, turn the other components associated to the pin 'on'
+					if (closeCircuit) {
+						for (let otherComponent of this.dataLoaded.pins[pin].components) {
+							if (this.dataLoaded.components[otherComponent].name === 'led') {
+								$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + otherComponent + '"] #color_path32').css({ fill: 'hsl(' + this.ledColors[this.dataLoaded.components[otherComponent].color] + ', 100%, 50%)' });
+								this.dataLoaded.components[otherComponent].active = true;
+							}
+						}
+					}
+				}
+			}
+		});
+
+		// Function for releasing the button
+		$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"]').on('mouseup', () => {
+			this.dataLoaded.components[component].active = false;
+
+			// Turn the other components associated to the pin 'off'
+			for (let pin of Object.keys(this.dataLoaded.pins)) {
+				if (this.dataLoaded.pins[pin].components.indexOf(component) !== -1) {
+					for (let otherComponent of this.dataLoaded.pins[pin].components) {
+						if (otherComponent !== component && this.dataLoaded.components[otherComponent].name === 'led') {
+							$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + otherComponent + '"] #color_path32').css({ fill: 'hsl(' + this.ledColors[this.dataLoaded.components[otherComponent].color] + ', 25%, 50%)' });
+							this.dataLoaded.components[otherComponent].active = false;
+						}
+					}
+				}
+			}
+		});
+
+		// Function for leveaing the area of the button
+		$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"]').on('mouseleave', () => {
+			this.dataLoaded.components[component].active = false;
+
+			// Turn the other components associated to the pin 'off'
+			for (let pin of Object.keys(this.dataLoaded.pins)) {
+				if (this.dataLoaded.pins[pin].components.indexOf(component) !== -1) {
+					for (let otherComponent of this.dataLoaded.pins[pin].components) {
+						if (otherComponent !== component && this.dataLoaded.components[otherComponent].name === 'led') {
+							$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + otherComponent + '"] #color_path32').css({ fill: 'hsl(' + this.ledColors[this.dataLoaded.components[otherComponent].color] + ', 25%, 50%)' });
+							this.dataLoaded.components[otherComponent].active = false;
+						}
+					}
+				}
+			}
+		});
+
+		// Change the cursor style if hover the button
+		$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"]').css('cursor', 'pointer');
+	},
+
+	/**
 	 * Load the SVG, parse the XML and set to default the components
 	 * @param  {String} name The name of the project to load
 	 */
@@ -231,8 +320,7 @@ let generic_raspberrypi = {
 			// Initialize LEDs 'off'
 			for (let component of Object.keys(this.dataLoaded.components)) {
 				if (this.dataLoaded.components[component].valid && this.dataLoaded.components[component].name === 'led') {
-					this.dataLoaded.components[component].active = false;
-					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"] #color_path32').css({ fill: 'hsl(' + this.ledColors[this.dataLoaded.components[component].color] + ', 25%, 50%)' });
+					this.setLed(component, 0);
 				}
 			}
 
@@ -241,8 +329,7 @@ let generic_raspberrypi = {
 				if ((this.dataLoaded.pins[pin].id === '3v3' || this.dataLoaded.pins[pin].id === '5v') && this.dataLoaded.pins[pin].circuitInterruption === false) {
 					for (let component of Object.keys(this.dataLoaded.components)) {
 						if (this.dataLoaded.components[component].valid && this.dataLoaded.components[component].name === 'led') {
-							this.dataLoaded.components[component].active = true;
-							$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"] #color_path32').css({ fill: 'hsl(' + this.ledColors[this.dataLoaded.components[component].color] + ', 100%, 50%)' });
+							this.setLed(component, 1);
 						}
 					}
 				}
@@ -251,73 +338,7 @@ let generic_raspberrypi = {
 			// Initialize BUTTONs functions
 			for (let component of Object.keys(this.dataLoaded.components)) {
 				if (this.dataLoaded.components[component].valid && this.dataLoaded.components[component].name === 'button') {
-					this.dataLoaded.components[component].active = false;
-
-					// Function for pressing the button
-					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"]').on('mousedown', () => {
-						this.dataLoaded.components[component].active = true;
-
-						for (let pin of Object.keys(this.dataLoaded.pins)) {
-							if (this.dataLoaded.pins[pin].components.indexOf(component) !== -1 && this.dataLoaded.pins[pin].state === 'out' && this.dataLoaded.pins[pin].value === 1) {
-
-								// Check if the full circuit is active
-								let closeCircuit = true;
-								for (let otherComponent of this.dataLoaded.pins[pin].components) {
-									if (otherComponent !== component && this.dataLoaded.components[otherComponent].name === 'button' && this.dataLoaded.components[otherComponent].active === false) {
-										closeCircuit = false;
-										break;
-									}
-								}
-
-								// If the circuit is active, turn the other components associated to the pin 'on'
-								if (closeCircuit) {
-									for (let otherComponent of this.dataLoaded.pins[pin].components) {
-										if (this.dataLoaded.components[otherComponent].name === 'led') {
-											$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + otherComponent + '"] #color_path32').css({ fill: 'hsl(' + this.ledColors[this.dataLoaded.components[otherComponent].color] + ', 100%, 50%)' });
-											this.dataLoaded.components[otherComponent].active = true;
-										}
-									}
-								}
-							}
-						}
-					});
-
-					// Function for releasing the button
-					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"]').on('mouseup', () => {
-						this.dataLoaded.components[component].active = false;
-
-						// Turn the other components associated to the pin 'off'
-						for (let pin of Object.keys(this.dataLoaded.pins)) {
-							if (this.dataLoaded.pins[pin].components.indexOf(component) !== -1) {
-								for (let otherComponent of this.dataLoaded.pins[pin].components) {
-									if (otherComponent !== component && this.dataLoaded.components[otherComponent].name === 'led') {
-										$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + otherComponent + '"] #color_path32').css({ fill: 'hsl(' + this.ledColors[this.dataLoaded.components[otherComponent].color] + ', 25%, 50%)' });
-										this.dataLoaded.components[otherComponent].active = false;
-									}
-								}
-							}
-						}
-					});
-
-					// Function for leveaing the area of the button
-					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"]').on('mouseleave', () => {
-						this.dataLoaded.components[component].active = false;
-
-						// Turn the other components associated to the pin 'off'
-						for (let pin of Object.keys(this.dataLoaded.pins)) {
-							if (this.dataLoaded.pins[pin].components.indexOf(component) !== -1) {
-								for (let otherComponent of this.dataLoaded.pins[pin].components) {
-									if (otherComponent !== component && this.dataLoaded.components[otherComponent].name === 'led') {
-										$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + otherComponent + '"] #color_path32').css({ fill: 'hsl(' + this.ledColors[this.dataLoaded.components[otherComponent].color] + ', 25%, 50%)' });
-										this.dataLoaded.components[otherComponent].active = false;
-									}
-								}
-							}
-						}
-					});
-
-					// Change the cursor style if hover the button
-					$(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"]').css('cursor', 'pointer');
+					this.setButton(component);
 				}
 			}
 		} catch(e) {

@@ -81,7 +81,7 @@ export default {
 				// Set the attribute 'pins' of each component
 				let pins = '';
 				for (let pin of Object.keys(this.projectData.pins)) {
-					if (this.projectData.pins[pin].components.includes(component)) {
+					if (this.projectData.pins[pin].id !== 'gnd' && this.projectData.pins[pin].components.includes(component)) {
 						if (pins === '') {
 							pins += pin;
 						} else {
