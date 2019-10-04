@@ -54,20 +54,23 @@ export default {
 	},
 
 	created() {
-		// for (let raspberrypiSchematic of Object.keys(generic_raspberrypi.schematicsData)) {
-		// 	this.projects[raspberrypiSchematic] = generic_raspberrypi.schematicsData[raspberrypiSchematic].name;
-		// }
-
+		// Save the current project name
 		this.projectName = generic_raspberrypi.svgLoaded;
 	},
 
 	watch: {
+		/**
+		 * Load a new project for every change of the variable 'projectName'
+		 * @param  {String} name The name of the project to be loaded
+		 */
 		projectName(name) {
-			generic_raspberrypi.loadSvg(name);
+			// Load the new project data
+			generic_raspberrypi.loadProject(name);
 			this.projectData = generic_raspberrypi.dataLoaded;
 
 			this.componentsTable = [];
 
+			// Create the list needed for the table of components
 			for (let component of Object.keys(this.projectData.components)) {
 				let newComponent = {
 					pins: null,
@@ -75,9 +78,9 @@ export default {
 					color: null
 				};
 
+				// Set the attribute 'pins' of each component
 				let pins = '';
 				for (let pin of Object.keys(this.projectData.pins)) {
-					console.log(this.projectData.pins[pin].components.indexOf(component) + ', ' + this.projectData.components[component].name);
 					if (this.projectData.pins[pin].components.includes(component)) {
 						if (pins === '') {
 							pins += pin;
@@ -86,13 +89,13 @@ export default {
 							pins += pin;
 						}
 					}
-
-					break;
 				}
-
 				newComponent.pins = pins.toUpperCase();
+
+				// Set the attribute 'name' of each component
 				newComponent.name = this.projectData.components[component].name.toUpperCase();
 
+				// Set the attribute 'color' of each component
 				if (this.projectData.components[component].color) {
 					newComponent.color = this.projectData.components[component].color.toUpperCase();
 				} else {

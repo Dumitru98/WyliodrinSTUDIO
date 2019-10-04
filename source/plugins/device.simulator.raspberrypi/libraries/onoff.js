@@ -1,3 +1,4 @@
+// This is the 'onoff.Gpio' constructor for the JS interpreter
 let onoff = 
 `libraries['onoff'] = {
 	Gpio: function (pin, state, edge, options) {
