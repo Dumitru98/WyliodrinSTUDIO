@@ -5,7 +5,7 @@ let generic_raspberrypi = {
 	name: 'Raspberry Pi 3 Model B v1.2',
 	svgGenericPath: './plugins/device.simulator.raspberrypi/data/schematics/svg/',
 	xmlGenericPath: './plugins/device.simulator.raspberrypi/data/schematics/xml/',
-	svgLoaded: 'testLcd',
+	svgLoaded: 'testButtonAndLed',
 	dataLoaded: null,
 	vccPins: [0, 1, 3, 16],
 	gndPins: [5, 8, 13, 19, 24, 29, 33, 38],
