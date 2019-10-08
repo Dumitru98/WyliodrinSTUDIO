@@ -8,7 +8,7 @@ let onoff_library = {
 	 * @param  {String} state The state of the pin, 'in' or 'out'
 	 */
 	create: function(pin, state) {
-		if (state && generic_raspberrypi.dataLoaded.pins[pin]) {
+		if (generic_raspberrypi.dataLoaded.pins[pin] && state) {
 			generic_raspberrypi.dataLoaded.pins[pin].state = state;
 		}
 	},
@@ -45,7 +45,7 @@ let onoff_library = {
 				}
 			}
 
-			if (activeCircuit) {
+			if (activeCircuit && generic_raspberrypi.dataLoaded.pins[pin].activeLow === false) {
 				return 1;
 			} else {
 				return 0;
@@ -80,7 +80,18 @@ let onoff_library = {
 	 */
 	writeSync: function(pin, state, value) {
 		try {
-			generic_raspberrypi.dataLoaded.pins[pin].value = value;
+			let output = value;
+
+			// Invert values in case of activeLow
+			if (generic_raspberrypi.dataLoaded.pins[pin].activeLow) {
+				if (output) {
+					output = 0;
+				} else {
+					output = 1;
+				}
+			}
+
+			generic_raspberrypi.dataLoaded.pins[pin].value = output;
 
 			console.log(generic_raspberrypi.dataLoaded.pins[pin].components);
 
@@ -94,7 +105,7 @@ let onoff_library = {
 			}
 
 			// Set the components associated to te pin
-			if (validCircuit && value) {
+			if (validCircuit && output) {
 				let activeCircuit = true;
 
 				// Check if there is any switch in the circuit, and if so, check if it is pressed
@@ -114,7 +125,7 @@ let onoff_library = {
 						}
 					}
 				} 
-			} else if (validCircuit && value === false) {
+			} else if (validCircuit && output === false) {
 				// Set the low value for every LED
 				for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
 					if (generic_raspberrypi.dataLoaded.components[component].name === 'led') {
@@ -167,13 +178,13 @@ let onoff_library = {
 	},
 
 	/**
-	 * --- NOT YET IMPLEMENTED ---
 	 * The 'onoff.Gpio.direction' function for the JS interpreter
 	 * It returns the current state of the given pin
+	 * @param  {Integer} pin The number of the pin from the RaspberryPi
 	 */
-	direction: function() {
+	direction: function(pin) {
 		try {
-			console.log('direction');
+			return generic_raspberrypi.dataLoaded.pins[pin].state;
 		} catch(e) {
 			console.log(e);
 		}
@@ -183,36 +194,39 @@ let onoff_library = {
 	 * --- NOT YET IMPLEMENTED ---
 	 * The 'onoff.Gpio.setDirection' function for the JS interpreter
 	 * It sets the new state of the given pin
+	 * @param  {Integer} pin The number of the pin from the RaspberryPi
+	 * @param  {String} value The new state of the pin
 	 */
-	setDirection: function() {
+	setDirection: function(pin, value) {
 		try {
-			console.log('setDirection');
+			generic_raspberrypi.dataLoaded.pins[pin].state = value;
 		} catch(e) {
 			console.log(e);
 		}
 	},
 
 	/**
-	 * --- NOT YET IMPLEMENTED ---
 	 * The 'onoff.Gpio.activeLow' function for the JS interpreter
-	 * ---------------------------
+	 * It returns the value of activeLow of the given pin
+	 * @param  {Integer} pin The number of the pin from the RaspberryPi
 	 */
-	activeLow: function() {
+	activeLow: function(pin) {
 		try {
-			console.log('activeLow');
+			return generic_raspberrypi.dataLoaded.pins[pin].activeLow;
 		} catch(e) {
 			console.log(e);
 		}
 	},
 
 	/**
-	 * --- NOT YET IMPLEMENTED ---
-	 * The 'onoff.Gpio.activeLow' function for the JS interpreter
-	 * ---------------------------
+	 * The 'onoff.Gpio.setActiveLow' function for the JS interpreter
+	 * It sets the value of activeLow to the given pin
+	 * @param  {Integer} pin The number of the pin from the RaspberryPi
+	 * @param  {Bool} value The value if the input/output should be inverted
 	 */
-	setActiveLow: function() {
+	setActiveLow: function(pin, value) {
 		try {
-			console.log('setActiveLow');
+			generic_raspberrypi.dataLoaded.pins[pin].activeLow = value;
 		} catch(e) {
 			console.log(e);
 		}

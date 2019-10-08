@@ -64,6 +64,7 @@ export default function generate_project_json(xml, name) {
 							component.name = 'potentiometer';
 						} else if (connector.part.attributes.title.toLowerCase().includes('lcd')) {
 							component.name = 'lcd';
+							component.text = [['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']];
 						}
 
 						components[connector.part.attributes.id] = component;
@@ -92,6 +93,7 @@ export default function generate_project_json(xml, name) {
 			value: null,
 			edge: null,
 			state: null,
+			activeLow: null,
 			circuitInterruption: null,
 			components: []
 		};
@@ -100,8 +102,9 @@ export default function generate_project_json(xml, name) {
 		if (connection.name.toLowerCase().includes('gipo') &&
 			connection.components.length > 0) {
 			newPinObject.value = 0;
-			newPinObject.state = 'none';
 			newPinObject.edge = 'none';
+			newPinObject.state = 'none';
+			newPinObject.activeLow = false;
 			newPinObject.circuitInterruption = false;
 			newPinObject.components.push(connection.components[0]);
 
@@ -194,7 +197,7 @@ export default function generate_project_json(xml, name) {
 		i ++;
 	}
 	
-	// Check if all the components have the 2 pins connected to the RaspberryPi
+	// Check if all the components have at least 2 pins connected to the RaspberryPi
 	for (let component of Object.keys(components)) {
 
 		// Find the numbers of occurences of the component

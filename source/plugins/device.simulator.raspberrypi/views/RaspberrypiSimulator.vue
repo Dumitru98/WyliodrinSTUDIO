@@ -18,6 +18,7 @@
 		</template>
 
 		<div id="raspberrypi_svg"></div>
+		<div id="lcd_display"></div>
 	</div>
 </template>
 
@@ -101,7 +102,31 @@ export default {
 					newComponent.color = '-';
 				}
 
+				// Add the component to the table
 				this.componentsTable.push(newComponent);
+
+				// Create the LCD segments simulation and add them to the HTML
+				if (this.projectData.components[component].name === 'lcd') {
+					let leftPosition = 0;
+					let topPosition = 0;
+					for (let i = 0; i < 2; i ++) {
+						for (let j = 0; j < 16; j ++) {
+							let lcd = document.createElement('div');
+
+							if (j === 0 && i !== 0) {
+								leftPosition = 0;
+								topPosition += 21;
+							}
+
+							lcd.style.cssText = 'position: absolute; left: ' + leftPosition + 'px; top: ' + topPosition + 'px; width: 12px; height: 20px; font-size: 15px; background: green';
+
+							leftPosition += 13;
+
+							lcd.id = 'segment ' + i + '-' + j;
+							document.getElementById('lcd_display').appendChild(lcd);
+						}
+					}
+				}
 			}
 		}
 	}

@@ -7,7 +7,7 @@ let onoff =
 		this.edge = edge;
 		this.options = options;
 
-		onoff.Gpio.create(this.pin, this.state);
+		onoff.Gpio.create(pin, state);
 
 		this.read = function() {
 			return onoff.Gpio.read(this.pin, this.state);
@@ -37,12 +37,12 @@ let onoff =
 			onoff.Gpio.unwatchAll();
 		};
 
-		this.direction = function() {
-			onoff.Gpio.direction();
+		this.direction = function(this.pin) {
+			onoff.Gpio.direction(this.pin);
 		};
 
-		this.setDirection = function(value) {
-			onoff.Gpio.setDirection(value);
+		this.setDirection = function(this.pin, value) {
+			onoff.Gpio.setDirection(this.pin, value);
 		};
 
 		this.activeLow = function(value) {
