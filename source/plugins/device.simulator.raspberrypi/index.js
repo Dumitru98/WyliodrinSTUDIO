@@ -11,6 +11,7 @@ import RaspberrypiSimulator from './views/RaspberrypiSimulator.vue';
 import JSInterpreter from './JSInterpreter/interpreter.js';
 import JSInterpreterLibrary from './JSInterpreter/interpreter_library.js';
 import onoff from './libraries/onoff.js';
+import lcd from './libraries/lcd.js';
 
 /**
  * Update the device status
@@ -109,8 +110,9 @@ export default function setup(options, imports, register) {
 			// Create the object constructors for each library and
 			// append them to the users code
 			let librariesToLoad = 
-				`var libraries = {};\n\n`
-				+ onoff +
+				`var libraries = {};\n\n` +
+				onoff +
+				lcd +
 				`function require (name) {
 					return libraries[name];
 				};\n\n`;

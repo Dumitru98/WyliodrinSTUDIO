@@ -62,6 +62,8 @@ export default function generate_project_json(xml, name) {
 							component.name = 'button';
 						} else if (connector.part.attributes.title.toLowerCase().includes('pot')) {
 							component.name = 'potentiometer';
+						} else if (connector.part.attributes.title.toLowerCase().includes('lcd')) {
+							component.name = 'lcd';
 						}
 
 						components[connector.part.attributes.id] = component;

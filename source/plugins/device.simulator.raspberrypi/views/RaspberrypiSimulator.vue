@@ -23,7 +23,6 @@
 
 <script>
 import $ from 'jquery';
-import generate_project_json from './../libraries/generate_project_json.js'
 
 import generic_raspberrypi from './../libraries/generic_raspberrypi.js';
 

@@ -53,6 +53,6 @@ let onoff =
 			onoff.Gpio.setActiveLow(value);
 		};
 	}
-};\n`;
+};\n\n`;
 
 export default onoff;
