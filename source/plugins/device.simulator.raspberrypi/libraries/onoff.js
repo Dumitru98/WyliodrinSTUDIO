@@ -10,11 +10,11 @@ let onoff =
 		onoff.Gpio.create(pin, state);
 
 		this.read = function() {
-			return onoff.Gpio.read(this.pin, this.state);
+			return onoff.Gpio.read(this.pin);
 		};
 
 		this.readSync = function() {
-			return onoff.Gpio.readSync(this.pin, this.state);
+			return onoff.Gpio.readSync(this.pin);
 		};
 
 		this.write = function(value) {
@@ -37,20 +37,20 @@ let onoff =
 			onoff.Gpio.unwatchAll();
 		};
 
-		this.direction = function(this.pin) {
-			onoff.Gpio.direction(this.pin);
+		this.direction = function() {
+			return onoff.Gpio.direction(this.pin);
 		};
 
-		this.setDirection = function(this.pin, value) {
+		this.setDirection = function(value) {
 			onoff.Gpio.setDirection(this.pin, value);
 		};
 
-		this.activeLow = function(value) {
-			onoff.Gpio.activeLow(value);
+		this.activeLow = function() {
+			return onoff.Gpio.activeLow(this.pin);
 		};
 
 		this.setActiveLow = function(value) {
-			onoff.Gpio.setActiveLow(value);
+			onoff.Gpio.setActiveLow(this.pin, value);
 		};
 	}
 };\n\n`;

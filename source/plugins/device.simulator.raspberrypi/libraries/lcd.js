@@ -8,7 +8,7 @@ let lcd =
 	this.rows = rows;
 
 	this.print = function(value) {
-		return lcd.print(value);
+		return lcd.print(value, this.rs);
 	};
 
 	this.clear = function() {
@@ -16,19 +16,19 @@ let lcd =
 	};
 
 	this.home = function() {
-		return lcd.home();
+		return lcd.home(this.rs);
 	};
 
 	this.setCursor = function(col, row) {
-		return lcd.setCursor(col, row);
+		return lcd.setCursor(col, row, this.rs);
 	};
 
 	this.cursor = function() {
-		return lcd.cursor();
+		return lcd.cursor(this.rs);
 	};
 
 	this.noCursor = function() {
-		return lcd.noCursor();
+		return lcd.noCursor(this.rs);
 	};
 
 	this.blink = function() {

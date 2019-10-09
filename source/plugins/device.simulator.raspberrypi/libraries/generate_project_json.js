@@ -64,7 +64,12 @@ export default function generate_project_json(xml, name) {
 							component.name = 'potentiometer';
 						} else if (connector.part.attributes.title.toLowerCase().includes('lcd')) {
 							component.name = 'lcd';
-							component.text = [['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']];
+							component.segments = [['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']];
+							component.text = '';
+							component.cursor = true;
+							component.blink = true;
+							component.curCol = 0;
+							component.curRow = 0;
 						}
 
 						components[connector.part.attributes.id] = component;
@@ -103,7 +108,7 @@ export default function generate_project_json(xml, name) {
 			connection.components.length > 0) {
 			newPinObject.value = 0;
 			newPinObject.edge = 'none';
-			newPinObject.state = 'none';
+			newPinObject.state = 'in';
 			newPinObject.activeLow = false;
 			newPinObject.circuitInterruption = false;
 			newPinObject.components.push(connection.components[0]);

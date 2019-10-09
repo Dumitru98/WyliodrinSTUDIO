@@ -1,4 +1,5 @@
 import generic_raspberrypi from './../libraries/generic_raspberrypi.js';
+import update_components from './../libraries/update_components.js'
 
 let onoff_library = {
 	/**
@@ -20,7 +21,7 @@ let onoff_library = {
 	 * @param  {Integer} pin The number of the pin from the RaspberryPi
 	 * @param  {String} state The state of the pin, 'in' or 'out'
 	 */
-	read: function(pin, state) {
+	read: function(pin) {
 		try {
 			console.log('read');
 		} catch(e) {
@@ -34,7 +35,7 @@ let onoff_library = {
 	 * @param  {Integer} pin The number of the pin from the RaspberryPi
 	 * @param  {String} state The state of the pin, 'in' or 'out'
 	 */
-	readSync: function(pin, state) {
+	readSync: function(pin) {
 		try {
 			let activeCircuit = true;
 
@@ -45,10 +46,18 @@ let onoff_library = {
 				}
 			}
 
-			if (activeCircuit && generic_raspberrypi.dataLoaded.pins[pin].activeLow === false) {
-				return 1;
+			if (activeCircuit) {
+				if (generic_raspberrypi.dataLoaded.pins[pin].activeLow) {
+					return 0;
+				} else {
+					return 1;
+				}
 			} else {
-				return 0;
+				if (generic_raspberrypi.dataLoaded.pins[pin].activeLow) {
+					return 1;
+				} else {
+					return 0;
+				}
 			}
 		} catch(e) {
 			console.log(e);
@@ -92,47 +101,7 @@ let onoff_library = {
 			}
 
 			generic_raspberrypi.dataLoaded.pins[pin].value = output;
-
-			console.log(generic_raspberrypi.dataLoaded.pins[pin].components);
-
-			// Check if the circuit associated to the given pin is valid
-			let validCircuit = true;
-			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-				if (generic_raspberrypi.dataLoaded.components[component].valid === false) {
-					validCircuit = false;
-					break;
-				}
-			}
-
-			// Set the components associated to te pin
-			if (validCircuit && output) {
-				let activeCircuit = true;
-
-				// Check if there is any switch in the circuit, and if so, check if it is pressed
-				if (generic_raspberrypi.dataLoaded.pins[pin].circuitInterruption === true) {
-					for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-						if (generic_raspberrypi.dataLoaded.components[component].active === false) {
-							activeCircuit = false;
-						}
-					}
-				}
-
-				// If the circuit is complete, set the vhigh value for every LED
-				if (activeCircuit) {
-					for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-						if (generic_raspberrypi.dataLoaded.components[component].name === 'led') {
-							generic_raspberrypi.setLed(component, 1);
-						}
-					}
-				} 
-			} else if (validCircuit && output === false) {
-				// Set the low value for every LED
-				for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-					if (generic_raspberrypi.dataLoaded.components[component].name === 'led') {
-						generic_raspberrypi.setLed(component, 0);
-					}
-				}
-			}
+			update_components();
 		} catch(e) {
 			console.log(e);
 		}
@@ -227,6 +196,12 @@ let onoff_library = {
 	setActiveLow: function(pin, value) {
 		try {
 			generic_raspberrypi.dataLoaded.pins[pin].activeLow = value;
+
+			if (generic_raspberrypi.dataLoaded.pins[pin].value) {
+				generic_raspberrypi.dataLoaded.pins[pin].value = 0;
+			} else {
+				generic_raspberrypi.dataLoaded.pins[pin].value = 1;
+			}
 		} catch(e) {
 			console.log(e);
 		}

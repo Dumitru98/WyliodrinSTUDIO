@@ -10,6 +10,7 @@ import { EventEmitter } from 'events';
 import RaspberrypiSimulator from './views/RaspberrypiSimulator.vue';
 import JSInterpreter from './JSInterpreter/interpreter.js';
 import JSInterpreterLibrary from './JSInterpreter/interpreter_library.js';
+import generic_raspberrypi from './libraries/generic_raspberrypi.js';
 import onoff from './libraries/onoff.js';
 import lcd from './libraries/lcd.js';
 
@@ -120,6 +121,7 @@ export default function setup(options, imports, register) {
 
 			// Create the JS interpreter with the associated functions
 			let interpreter = new JSInterpreter(code, JSInterpreterLibrary(studio, device));
+			generic_raspberrypi.setDefault();
 
 			// Set the variables of the device to 'running' and update the device
 			simulator.opperationsCounter = 0;
@@ -128,10 +130,10 @@ export default function setup(options, imports, register) {
 			updateDevice(device);
 
 			/**
-			 * The function tobe executed by the interpreter
+			 * The function to be executed by the interpreter
 			 * The code written by the user is executed step by step, and each
 			 * 100 steps it is slowed down in order for the application not to
-			 * crash in case of infinite loop
+			 * crash in case of an infinite loop
 			 */
 			let runToCompletion = function() {
 				if (simulator.isRunning && interpreter.step()) {
