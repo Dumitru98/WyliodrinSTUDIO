@@ -58,10 +58,12 @@ let lcd_library = {
 	 */
 	home: function(pin) {
 		try {
-			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
-					generic_raspberrypi.dataLoaded.components[component].curCol = 0;
-					generic_raspberrypi.dataLoaded.components[component].curRow = 0;
+			if (generic_raspberrypi.dataLoaded.components[component].cursor) {
+				for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+					if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
+						generic_raspberrypi.dataLoaded.components[component].curCol = 0;
+						generic_raspberrypi.dataLoaded.components[component].curRow = 0;
+					}
 				}
 			}
 		} catch(e) {
@@ -73,15 +75,17 @@ let lcd_library = {
 	 * The 'lcd.setCursor' function for the JS interpreter
 	 * It sets the cursor to a given position
 	 * @param  {Integer} pin The number of the pin from the RaspberryPi
-	 * @param  {Integer} row The number of the row of the cursor
-	 * @param  {Integer} col The number of the colomn of the cursor
+	 * @param  {Integer} row The number of the row of the cursor on the LCD
+	 * @param  {Integer} col The number of the colomn of the cursor on the LCD
 	 */
 	setCursor: function(pin, row, col) {
 		try {
-			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
-					generic_raspberrypi.dataLoaded.components[component].curCol = col;
-					generic_raspberrypi.dataLoaded.components[component].curRow = row;
+			if (generic_raspberrypi.dataLoaded.components[component].cursor) {
+				for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+					if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
+						generic_raspberrypi.dataLoaded.components[component].curCol = col;
+						generic_raspberrypi.dataLoaded.components[component].curRow = row;
+					}
 				}
 			}
 		} catch(e) {
@@ -98,7 +102,11 @@ let lcd_library = {
 		try {
 			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
 				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
-					generic_raspberrypi.dataLoaded.components[component].cursor = true;
+					if (generic_raspberrypi.dataLoaded.components[component].cursor === false) {
+						generic_raspberrypi.dataLoaded.components[component].cursor = true;
+						generic_raspberrypi.dataLoaded.components[component].curCol = 0;
+						generic_raspberrypi.dataLoaded.components[component].curRow = 0;
+					}
 				}
 			}
 		} catch(e) {
@@ -124,34 +132,28 @@ let lcd_library = {
 	},
 
 	/**
+	 * --- NOT YET IMPLEMENTED ---
 	 * The 'lcd.blink' function for the JS interpreter
 	 * It enables the cursor blinking
 	 * @param  {Integer} pin The number of the pin from the RaspberryPi
 	 */
 	blink: function(pin) {
 		try {
-			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
-					generic_raspberrypi.dataLoaded.components[component].blink = true;
-				}
-			}
+			console.log('blink');
 		} catch(e) {
 			console.log(e);
 		}
 	},
 
 	/**
+	 * --- NOT YET IMPLEMENTED ---
 	 * The 'lcd.noBlink' function for the JS interpreter
 	 * It disables the cursor blinking
 	 * @param  {Integer} pin The number of the pin from the RaspberryPi
 	 */
 	noBlink: function(pin) {
 		try {
-			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
-					generic_raspberrypi.dataLoaded.components[component].blink = false;
-				}
-			}
+			console.log('noBlink');
 		} catch(e) {
 			console.log(e);
 		}

@@ -118,7 +118,7 @@ export default {
 								topPosition += 21;
 							}
 
-							lcd.style.cssText = 'position: absolute; left: ' + leftPosition + 'px; top: ' + topPosition + 'px; width: 12px; height: 20px; font-size: 15px; background: green';
+							lcd.style.cssText = 'position: absolute; left: ' + leftPosition + 'px; top: ' + topPosition + 'px; width: 12px; height: 20px; text-align: center; font-size: 15px; background: #9ACD32';
 
 							leftPosition += 13;
 
