@@ -10,7 +10,7 @@ import { EventEmitter } from 'events';
 import RaspberrypiSimulator from './views/RaspberrypiSimulator.vue';
 import JSInterpreter from './JSInterpreter/interpreter.js';
 import JSInterpreterLibrary from './JSInterpreter/interpreter_library.js';
-import generic_raspberrypi from './libraries/generic_raspberrypi.js';
+import generic_raspberrypi from './libraries/utils/generic_raspberrypi.js';
 import onoff from './libraries/onoff.js';
 import lcd from './libraries/lcd.js';
 

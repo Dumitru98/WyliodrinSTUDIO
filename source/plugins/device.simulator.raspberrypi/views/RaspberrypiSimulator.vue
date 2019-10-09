@@ -25,7 +25,7 @@
 <script>
 import $ from 'jquery';
 
-import generic_raspberrypi from './../libraries/generic_raspberrypi.js';
+import generic_raspberrypi from './../libraries/utils/generic_raspberrypi.js';
 
 export default {
 	name: 'RaspberrypiSimulator',

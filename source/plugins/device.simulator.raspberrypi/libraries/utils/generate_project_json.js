@@ -1,5 +1,5 @@
-import xml2json from './../libraries/xml2json.js';
-import generic_raspberrypi from './../libraries/generic_raspberrypi.js';
+import xml2json from './xml2json.js';
+import generic_raspberrypi from './generic_raspberrypi.js';
 
 /**
  * Parse the XML file, and generate the JSON associated

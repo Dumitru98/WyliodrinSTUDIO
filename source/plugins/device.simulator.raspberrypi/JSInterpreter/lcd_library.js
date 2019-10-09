@@ -1,5 +1,5 @@
-import generic_raspberrypi from './../libraries/generic_raspberrypi.js';
-import update_components from '../libraries/update_components.js';
+import generic_raspberrypi from './../libraries/utils/generic_raspberrypi.js';
+import update_components from './../libraries/utils/update_components.js';
 
 let lcd_library = {
 	/**
