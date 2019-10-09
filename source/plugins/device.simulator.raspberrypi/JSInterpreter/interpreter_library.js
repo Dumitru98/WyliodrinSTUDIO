@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import _ from 'lodash';
 
 import onoff_library from './onoff_library.js';
@@ -72,9 +71,9 @@ export default function interpreterLibrary (studio, device) {
 		interpreter.setProperty(Gpio, 'activeLow', interpreter.createNativeFunction(onoff_library.activeLow));
 		interpreter.setProperty(Gpio, 'setActiveLow', interpreter.createNativeFunction(onoff_library.setActiveLow));
 
-		// Create the object lcd with the given structure and set all the functions
+		// Create the object LCD with the given structure and set all the functions
 		let lcd = interpreter.createObjectProto(interpreter.OBJECT_PROTO);
-		interpreter.setProperty(scope, 'lcd', lcd);
+		interpreter.setProperty(scope, 'lcd_library', lcd);
 		interpreter.setProperty(lcd, 'print', interpreter.createNativeFunction(lcd_library.print));
 		interpreter.setProperty(lcd, 'clear', interpreter.createNativeFunction(lcd_library.clear));
 		interpreter.setProperty(lcd, 'home', interpreter.createNativeFunction(lcd_library.home));

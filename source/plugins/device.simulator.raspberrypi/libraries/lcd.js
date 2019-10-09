@@ -1,70 +1,70 @@
 // This is the 'onoff.Gpio' constructor for the JS interpreter
 let lcd = 
-`libraries['lcd'] = function(rs, e, data, cols, rows) {
-	this.rs = rs;
-	this.e = e;
-	this.data = data;
-	this.cols = cols;
-	this.rows = rows;
+`libraries['lcd'] = function(object) {
+	this.rs = object.rs;
+	this.e = object.e;
+	this.data = object.data;
+	this.cols = object.cols;
+	this.rows = object.rows;
 
 	this.print = function(value) {
-		return lcd.print(value, this.rs);
+		lcd_library.print(this.rs, value);
 	};
 
 	this.clear = function() {
-		return lcd.clear();
+		lcd_library.clear(this.rs);
 	};
 
 	this.home = function() {
-		return lcd.home(this.rs);
+		lcd_library.home(this.rs);
 	};
 
 	this.setCursor = function(col, row) {
-		return lcd.setCursor(col, row, this.rs);
+		lcd_library.setCursor(this.rs, col, row);
 	};
 
 	this.cursor = function() {
-		return lcd.cursor(this.rs);
+		lcd_library.cursor(this.rs);
 	};
 
 	this.noCursor = function() {
-		return lcd.noCursor(this.rs);
+		lcd_library.noCursor(this.rs);
 	};
 
 	this.blink = function() {
-		return lcd.blink();
+		lcd_library.blink();
 	};
 
 	this.noBlink = function() {
-		return lcd.noBlink();
+		lcd_library.noBlink();
 	};
 
 	this.scrollDisplayLeft = function() {
-		return lcd.scrollDisplayLeft();
+		return lcd_library.scrollDisplayLeft();
 	};
 
 	this.scrollDisplayRight = function() {
-		return lcd.scrollDisplayRight();
+		return lcd_library.scrollDisplayRight();
 	};
 
 	this.leftToRight = function() {
-		return lcd.leftToRight();
+		return lcd_library.leftToRight();
 	};
 
 	this.rightToLeft = function() {
-		return lcd.rightToLeft();
+		return lcd_library.rightToLeft();
 	};
 
 	this.autoscroll = function() {
-		return lcd.autoscroll();
+		return lcd_library.autoscroll();
 	};
 
 	this.noAutoscroll = function() {
-		return lcd.noAutoscroll();
+		return lcd_library.noAutoscroll();
 	};
 
 	this.close = function() {
-		return lcd.close();
+		return lcd_library.close();
 	};
 };\n\n`;
 

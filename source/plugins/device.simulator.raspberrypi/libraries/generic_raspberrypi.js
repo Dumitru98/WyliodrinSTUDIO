@@ -6,7 +6,7 @@ let generic_raspberrypi = {
 	name: 'Raspberry Pi 3 Model B v1.2',
 	svgGenericPath: './plugins/device.simulator.raspberrypi/data/schematics/svg/',
 	xmlGenericPath: './plugins/device.simulator.raspberrypi/data/schematics/xml/',
-	svgLoaded: 'testButtonAndLed',
+	svgLoaded: 'testLcd',
 	dataLoaded: null,
 	vccPins: [0, 1, 3, 16],
 	gndPins: [5, 8, 13, 19, 24, 29, 33, 38],
@@ -108,7 +108,7 @@ let generic_raspberrypi = {
 		19: {
 			name: 'GND',
 			states: ['0']
-		}, 
+		},
 
 
 		20: {
@@ -240,6 +240,26 @@ let generic_raspberrypi = {
 	},
 
 	/**
+	 * Set the LCD to the initial state
+	 * @param  {String} component The id of the LCD
+	 */
+	setLcd: function(component) {
+		this.dataLoaded.components[component].text = '';
+		this.dataLoaded.components[component].cursor = true;
+		this.dataLoaded.components[component].blink = true;
+		this.dataLoaded.components[component].curCol = 0;
+		this.dataLoaded.components[component].curRow = 0;
+
+		for (let i = 0; i < 16; i ++) {
+			this.dataLoaded.components[component].segments[0][i] = '';
+			this.dataLoaded.components[component].segments[1][i] = '';
+
+			document.getElementById('segment ' + 0 + '-' + i).innerHTML = this.dataLoaded.components[component].segments[0][i];
+			document.getElementById('segment ' + 1 + '-' + i).innerHTML = this.dataLoaded.components[component].segments[1][i];
+		}
+	},
+
+	/**
 	 * Reset the variables needed to be reseted in the project JSON
 	 */
 	setDefault: function() {
@@ -258,6 +278,13 @@ let generic_raspberrypi = {
 						this.setLed(component, 0);
 					}
 				}
+			}
+		}
+
+		// Reset the state of the LCD
+		for (let component of Object.keys(this.dataLoaded.components)) {
+			if (this.dataLoaded.components[component].name === 'lcd') {
+				this.setLcd(component);
 			}
 		}
 	},
@@ -296,17 +323,16 @@ let generic_raspberrypi = {
 			// Parse XML file and save the JSON generated
 			this.dataLoaded = generate_project_json(xhrXml.responseXML.documentElement, name);
 
-			// Initialize LEDs 'off'
+			// Initialize the components
 			for (let component of Object.keys(this.dataLoaded.components)) {
-				if (this.dataLoaded.components[component].valid && this.dataLoaded.components[component].name === 'led') {
-					this.setLed(component, 0);
-				}
-			}
-
-			// Initialize BUTTONs functions
-			for (let component of Object.keys(this.dataLoaded.components)) {
-				if (this.dataLoaded.components[component].valid && this.dataLoaded.components[component].name === 'button') {
-					this.setButton(component);
+				if (this.dataLoaded.components[component].valid) {
+					if (this.dataLoaded.components[component].name === 'led') {
+						this.setLed(component, 0);
+					} else if (this.dataLoaded.components[component].name === 'button') {
+						this.setButton(component);
+					} else if (this.dataLoaded.components[component].name === 'lcd') {
+						this.setLcd(component);
+					}
 				}
 			}
 

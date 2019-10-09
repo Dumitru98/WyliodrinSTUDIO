@@ -1,27 +1,51 @@
 import generic_raspberrypi from './../libraries/generic_raspberrypi.js';
+import update_components from '../libraries/update_components.js';
 
 let lcd_library = {
 	/**
-	 * --- NOT YET IMPLEMENTED ---
 	 * The 'lcd.print' function for the JS interpreter
 	 * It prints a text on LCD
+	 * @param  {Integer} pin The number of the pin from the RaspberryPi
+	 * @param  {String} value The text to be written on the LCD
 	 */
-	print: function(value) {
+	print: function(pin, value) {
 		try {
-			console.log('print');
+			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
+					let curRow = generic_raspberrypi.dataLoaded.components[component].curRow;
+					let curCol = generic_raspberrypi.dataLoaded.components[component].curCol;
+
+					for (let i = 0; i < value.toString().length && i < 16 - curCol; i ++) {
+						generic_raspberrypi.dataLoaded.components[component].segments[curRow][i + curCol] = value.toString()[i];
+					}
+				}
+			}
+
+			update_components();
 		} catch(e) {
 			console.log(e);
 		}
 	},
 
 	/**
-	 * --- NOT YET IMPLEMENTED ---
 	 * The 'lcd.clear' function for the JS interpreter
-	 * It clears the LCD
+	 * It clears the LCD and free-up the memory
+	 * @param  {Integer} pin The number of the pin from the RaspberryPi
 	 */
-	clear: function() {
+	clear: function(pin) {
 		try {
-			console.log('clear');
+			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
+					generic_raspberrypi.dataLoaded.components[component].text = '';
+
+					for (let i = 0; i < 16; i ++) {
+						generic_raspberrypi.dataLoaded.components[component].segments[0][i] = '';
+						generic_raspberrypi.dataLoaded.components[component].segments[1][i] = '';
+					}
+				}
+			}
+
+			update_components();
 		} catch(e) {
 			console.log(e);
 		}
@@ -35,9 +59,9 @@ let lcd_library = {
 	home: function(pin) {
 		try {
 			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-				if (generic_raspberrypi.components[component].name === 'lcd') {
-					generic_raspberrypi.components[component].curCol = 0;
-					generic_raspberrypi.components[component].curRow = 0;
+				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
+					generic_raspberrypi.dataLoaded.components[component].curCol = 0;
+					generic_raspberrypi.dataLoaded.components[component].curRow = 0;
 				}
 			}
 		} catch(e) {
@@ -48,16 +72,16 @@ let lcd_library = {
 	/**
 	 * The 'lcd.setCursor' function for the JS interpreter
 	 * It sets the cursor to a given position
+	 * @param  {Integer} pin The number of the pin from the RaspberryPi
 	 * @param  {Integer} row The number of the row of the cursor
 	 * @param  {Integer} col The number of the colomn of the cursor
-	 * @param  {Integer} pin The number of the pin from the RaspberryPi
 	 */
-	setCursor: function(row, col, pin) {
+	setCursor: function(pin, row, col) {
 		try {
 			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-				if (generic_raspberrypi.components[component].name === 'lcd') {
-					generic_raspberrypi.components[component].curCol = col;
-					generic_raspberrypi.components[component].curRow = row;
+				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
+					generic_raspberrypi.dataLoaded.components[component].curCol = col;
+					generic_raspberrypi.dataLoaded.components[component].curRow = row;
 				}
 			}
 		} catch(e) {
@@ -73,8 +97,8 @@ let lcd_library = {
 	cursor: function(pin) {
 		try {
 			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-				if (generic_raspberrypi.components[component].name === 'lcd') {
-					generic_raspberrypi.components[component].cursor = true;
+				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
+					generic_raspberrypi.dataLoaded.components[component].cursor = true;
 				}
 			}
 		} catch(e) {
@@ -90,8 +114,8 @@ let lcd_library = {
 	noCursor: function(pin) {
 		try {
 			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-				if (generic_raspberrypi.components[component].name === 'lcd') {
-					generic_raspberrypi.components[component].cursor = false;
+				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
+					generic_raspberrypi.dataLoaded.components[component].cursor = false;
 				}
 			}
 		} catch(e) {
@@ -107,8 +131,8 @@ let lcd_library = {
 	blink: function(pin) {
 		try {
 			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-				if (generic_raspberrypi.components[component].name === 'lcd') {
-					generic_raspberrypi.components[component].blink = true;
+				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
+					generic_raspberrypi.dataLoaded.components[component].blink = true;
 				}
 			}
 		} catch(e) {
@@ -124,8 +148,8 @@ let lcd_library = {
 	noBlink: function(pin) {
 		try {
 			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-				if (generic_raspberrypi.components[component].name === 'lcd') {
-					generic_raspberrypi.components[component].blink = false;
+				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
+					generic_raspberrypi.dataLoaded.components[component].blink = false;
 				}
 			}
 		} catch(e) {

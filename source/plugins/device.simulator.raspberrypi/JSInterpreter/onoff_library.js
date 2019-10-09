@@ -202,6 +202,8 @@ let onoff_library = {
 			} else {
 				generic_raspberrypi.dataLoaded.pins[pin].value = 1;
 			}
+
+			update_components();
 		} catch(e) {
 			console.log(e);
 		}
