@@ -97,60 +97,64 @@ export default function setup(options, imports, register) {
 
 	// The code that should be executed in case of run button pressing
 	workspace.registerDeviceToolButton ('DEVICE_SIMULATOR_RASPBERRY_PI_RUN', 40, async () => {
-		// Load the project code
-		let project = studio.projects.getCurrentProject();
-		let filePath = studio.projects.getDefaultRunFileName(project);
-		let code = await studio.projects.loadFile(project, filePath);
+		try {
+			// Load the project code
+			let project = studio.projects.getCurrentProject();
+			let filePath = studio.projects.getDefaultRunFileName(project);
+			let code = await studio.projects.loadFile(project, filePath);
 
-		let device = studio.workspace.getDevice();
-		if (device && device.properties.isRunning === false) {
-			// Show and select the right console for this device (RaspberryPi simulator)
-			studio.console.show();
-			studio.console.select(device.id);
+			let device = studio.workspace.getDevice();
+			if (device && device.properties.isRunning === false) {
+				// Show and select the right console for this device (RaspberryPi simulator)
+				studio.console.show();
+				studio.console.select(device.id);
 
-			// Create the object constructors for each library and
-			// append them to the users code
-			let librariesToLoad = 
-				`var libraries = {};\n\n` +
-				onoff +
-				lcd +
-				`function require (name) {
-					return libraries[name];
-				};\n\n`;
-			code = librariesToLoad.toString() + code.toString();
+				// Create the object constructors for each library and
+				// append them to the users code
+				let librariesToLoad = 
+					`var libraries = {};\n\n` +
+					onoff +
+					lcd +
+					`function require (name) {
+						return libraries[name];
+					};\n\n`;
+				code = librariesToLoad.toString() + code.toString();
+				generic_raspberrypi.setDefault();
 
-			// Create the JS interpreter with the associated functions
-			let interpreter = new JSInterpreter(code, JSInterpreterLibrary(studio, device));
-			generic_raspberrypi.setDefault();
+				// Create the JS interpreter with the associated functions
+				let interpreter = new JSInterpreter(code, JSInterpreterLibrary(studio, device));
 
-			// Set the variables of the device to 'running' and update the device
-			simulator.opperationsCounter = 0;
-			simulator.isRunning = true;
-			device.properties.isRunning = true;
-			updateDevice(device);
+				// Set the variables of the device to 'running' and update the device
+				simulator.opperationsCounter = 0;
+				simulator.isRunning = true;
+				device.properties.isRunning = true;
+				updateDevice(device);
 
-			/**
-			 * The function to be executed by the interpreter
-			 * The code written by the user is executed step by step, and each
-			 * 100 steps it is slowed down in order for the application not to
-			 * crash in case of an infinite loop
-			 */
-			let runToCompletion = function() {
-				if (simulator.isRunning && interpreter.step()) {
-					simulator.opperationsCounter ++;
-					if (simulator.opperationsCounter === 100) {
-						setTimeout(runToCompletion, 10);
-						simulator.opperationsCounter = 0;
+				/**
+				 * The function to be executed by the interpreter
+				 * The code written by the user is executed step by step, and each
+				 * 100 steps it is slowed down in order for the application not to
+				 * crash in case of an infinite loop
+				 */
+				let runToCompletion = function() {
+					if (simulator.isRunning && interpreter.step()) {
+						simulator.opperationsCounter ++;
+						if (simulator.opperationsCounter === 100) {
+							setTimeout(runToCompletion, 10);
+							simulator.opperationsCounter = 0;
+						} else {
+							setTimeout(runToCompletion, 1);
+						}
 					} else {
-						setTimeout(runToCompletion, 1);
+						simulator.isRunning = false;
+						device.properties.isRunning = false;
+						updateDevice(device);
 					}
-				} else {
-					simulator.isRunning = false;
-					device.properties.isRunning = false;
-					updateDevice(device);
-				}
-			};
-			process.nextTick(runToCompletion);
+				};
+				process.nextTick(runToCompletion);
+			}
+		} catch(e) {
+			console.log(e);
 		}
 	}, 'plugins/device.simulator.raspberrypi/data/img/icons/run-icon.svg', {
 		visible() {

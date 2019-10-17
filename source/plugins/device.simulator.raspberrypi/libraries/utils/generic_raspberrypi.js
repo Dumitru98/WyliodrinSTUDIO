@@ -249,14 +249,8 @@ let generic_raspberrypi = {
 		this.dataLoaded.components[component].blink = true;
 		this.dataLoaded.components[component].curCol = 0;
 		this.dataLoaded.components[component].curRow = 0;
-
-		for (let i = 0; i < 16; i ++) {
-			this.dataLoaded.components[component].segments[0][i] = '';
-			this.dataLoaded.components[component].segments[1][i] = '';
-
-			document.getElementById('segment ' + 0 + '-' + i).innerHTML = this.dataLoaded.components[component].segments[0][i];
-			document.getElementById('segment ' + 1 + '-' + i).innerHTML = this.dataLoaded.components[component].segments[1][i];
-		}
+		this.dataLoaded.components[component].shift = 0;
+		this.dataLoaded.components[component].segments = [['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']];
 	},
 
 	/**
@@ -287,6 +281,8 @@ let generic_raspberrypi = {
 				this.setLcd(component);
 			}
 		}
+
+		update_components();
 	},
 
 	/**
@@ -324,19 +320,19 @@ let generic_raspberrypi = {
 			this.dataLoaded = generate_project_json(xhrXml.responseXML.documentElement, name);
 
 			// Initialize the components
-			for (let component of Object.keys(this.dataLoaded.components)) {
-				if (this.dataLoaded.components[component].valid) {
-					if (this.dataLoaded.components[component].name === 'led') {
-						this.setLed(component, 0);
-					} else if (this.dataLoaded.components[component].name === 'button') {
-						this.setButton(component);
-					} else if (this.dataLoaded.components[component].name === 'lcd') {
-						this.setLcd(component);
-					}
-				}
-			}
+			// for (let component of Object.keys(this.dataLoaded.components)) {
+			// 	if (this.dataLoaded.components[component].valid) {
+			// 		if (this.dataLoaded.components[component].name === 'led') {
+			// 			this.setLed(component, 0);
+			// 		} else if (this.dataLoaded.components[component].name === 'button') {
+			// 			this.setButton(component);
+			// 		} else if (this.dataLoaded.components[component].name === 'lcd') {
+			// 			this.setLcd(component);
+			// 		}
+			// 	}
+			// }
 
-			update_components();
+			// update_components();
 
 			console.log(this.dataLoaded);
 		} catch(e) {

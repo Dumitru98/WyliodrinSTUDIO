@@ -1,4 +1,4 @@
-// This is the 'onoff.Gpio' constructor for the JS interpreter
+// This is the 'lcd' constructor for the JS interpreter
 let lcd = 
 `libraries['lcd'] = function(object) {
 	this.rs = object.rs;
@@ -40,19 +40,19 @@ let lcd =
 	};
 
 	this.scrollDisplayLeft = function() {
-		return lcd_library.scrollDisplayLeft();
+		lcd_library.scrollDisplayLeft(this.rs);
 	};
 
 	this.scrollDisplayRight = function() {
-		return lcd_library.scrollDisplayRight();
+		lcd_library.scrollDisplayRight(this.rs);
 	};
 
 	this.leftToRight = function() {
-		return lcd_library.leftToRight();
+		return lcd_library.leftToRight(this.rs);
 	};
 
 	this.rightToLeft = function() {
-		return lcd_library.rightToLeft();
+		return lcd_library.rightToLeft(this.rs);
 	};
 
 	this.autoscroll = function() {

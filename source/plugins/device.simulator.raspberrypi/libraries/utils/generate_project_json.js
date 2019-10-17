@@ -65,11 +65,11 @@ export default function generate_project_json(xml, name) {
 						} else if (connector.part.attributes.title.toLowerCase().includes('lcd')) {
 							component.name = 'lcd';
 							component.segments = [['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']];
-							component.text = '';
 							component.cursor = true;
 							component.blink = true;
 							component.curCol = 0;
 							component.curRow = 0;
+							component.shift = 0;
 						}
 
 						components[connector.part.attributes.id] = component;

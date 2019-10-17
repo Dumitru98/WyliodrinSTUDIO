@@ -15,8 +15,8 @@ let lcd_library = {
 					let curRow = generic_raspberrypi.dataLoaded.components[component].curRow;
 					let curCol = generic_raspberrypi.dataLoaded.components[component].curCol;
 
-					for (let i = 0; i < value.toString().length && i < 16 - curCol; i ++) {
-						generic_raspberrypi.dataLoaded.components[component].segments[curRow][i + curCol] = value.toString()[i];
+					for (let i = curCol; i < value.toString().length; i ++) {
+						generic_raspberrypi.dataLoaded.components[component].segments[curRow][i] = value.toString()[i];
 					}
 				}
 			}
@@ -36,10 +36,11 @@ let lcd_library = {
 		try {
 			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
 				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
-					generic_raspberrypi.dataLoaded.components[component].text = '';
-
-					for (let i = 0; i < 16; i ++) {
+					for (let i = 0; i < generic_raspberrypi.dataLoaded.components[component].segments[0].length; i ++) {
 						generic_raspberrypi.dataLoaded.components[component].segments[0][i] = '';
+					}
+
+					for (let i = 0; i < generic_raspberrypi.dataLoaded.components[component].segments[1].length; i ++) {
 						generic_raspberrypi.dataLoaded.components[component].segments[1][i] = '';
 					}
 				}
@@ -58,12 +59,10 @@ let lcd_library = {
 	 */
 	home: function(pin) {
 		try {
-			if (generic_raspberrypi.dataLoaded.components[component].cursor) {
-				for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-					if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
-						generic_raspberrypi.dataLoaded.components[component].curCol = 0;
-						generic_raspberrypi.dataLoaded.components[component].curRow = 0;
-					}
+			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
+					generic_raspberrypi.dataLoaded.components[component].curCol = 0;
+					generic_raspberrypi.dataLoaded.components[component].curRow = 0;
 				}
 			}
 		} catch(e) {
@@ -80,12 +79,10 @@ let lcd_library = {
 	 */
 	setCursor: function(pin, row, col) {
 		try {
-			if (generic_raspberrypi.dataLoaded.components[component].cursor) {
-				for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-					if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
-						generic_raspberrypi.dataLoaded.components[component].curCol = col;
-						generic_raspberrypi.dataLoaded.components[component].curRow = row;
-					}
+			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
+					generic_raspberrypi.dataLoaded.components[component].curCol = col;
+					generic_raspberrypi.dataLoaded.components[component].curRow = row;
 				}
 			}
 		} catch(e) {
@@ -104,11 +101,11 @@ let lcd_library = {
 				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
 					if (generic_raspberrypi.dataLoaded.components[component].cursor === false) {
 						generic_raspberrypi.dataLoaded.components[component].cursor = true;
-						generic_raspberrypi.dataLoaded.components[component].curCol = 0;
-						generic_raspberrypi.dataLoaded.components[component].curRow = 0;
 					}
 				}
 			}
+
+			update_components();
 		} catch(e) {
 			console.log(e);
 		}
@@ -126,6 +123,8 @@ let lcd_library = {
 					generic_raspberrypi.dataLoaded.components[component].cursor = false;
 				}
 			}
+
+			update_components();
 		} catch(e) {
 			console.log(e);
 		}
@@ -160,26 +159,40 @@ let lcd_library = {
 	},
 
 	/**
-	 * --- NOT YET IMPLEMENTED ---
 	 * The 'lcd.scrollDisplayLeft' function for the JS interpreter
 	 * It scrolls the LCD to the left
+	 * @param  {Integer} pin The number of the pin from the RaspberryPi
 	 */
-	scrollDisplayLeft: function() {
+	scrollDisplayLeft: function(pin) {
 		try {
-			console.log('scrollDisplayLeft');
+			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
+					generic_raspberrypi.dataLoaded.components[component].shift += 1;
+				}
+			}
+
+			update_components();
 		} catch(e) {
 			console.log(e);
 		}
 	},
 
 	/**
-	 * --- NOT YET IMPLEMENTED ---
 	 * The 'lcd.scrollDisplayRight' function for the JS interpreter
 	 * It scrolls the LCD to the right
+	 * @param  {Integer} pin The number of the pin from the RaspberryPi
 	 */
-	scrollDisplayRight: function() {
+	scrollDisplayRight: function(pin) {
 		try {
-			console.log('scrollDisplayRight');
+			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
+					if (generic_raspberrypi.dataLoaded.components[component].shift > 0) {
+						generic_raspberrypi.dataLoaded.components[component].shift -= 1;
+					}
+				}
+			}
+
+			update_components();
 		} catch(e) {
 			console.log(e);
 		}

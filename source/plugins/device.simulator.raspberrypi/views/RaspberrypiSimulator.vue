@@ -119,11 +119,10 @@ export default {
 							}
 
 							lcd.style.cssText = 'position: absolute; left: ' + leftPosition + 'px; top: ' + topPosition + 'px; width: 12px; height: 20px; text-align: center; font-size: 15px; background: #9ACD32';
-
-							leftPosition += 13;
-
 							lcd.id = 'segment ' + i + '-' + j;
 							document.getElementById('lcd_display').appendChild(lcd);
+
+							leftPosition += 13;
 						}
 					}
 				}

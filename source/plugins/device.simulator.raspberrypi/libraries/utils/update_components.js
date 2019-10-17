@@ -41,8 +41,17 @@ export default function update_components() {
 	for (let component of Object.keys(generic_raspberrypi.dataLoaded.components)) {
 		if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
 			for (let i = 0; i < 16; i ++) {
-				document.getElementById('segment ' + 0 + '-' + i).innerHTML = generic_raspberrypi.dataLoaded.components[component].segments[0][i];
-				document.getElementById('segment ' + 1 + '-' + i).innerHTML = generic_raspberrypi.dataLoaded.components[component].segments[1][i];
+				if (generic_raspberrypi.dataLoaded.components[component].segments[0][i + generic_raspberrypi.dataLoaded.components[component].shift] === undefined) {
+					document.getElementById('segment ' + 0 + '-' + i).innerHTML = '';
+				} else {
+					document.getElementById('segment ' + 0 + '-' + i).innerHTML = generic_raspberrypi.dataLoaded.components[component].segments[0][i + generic_raspberrypi.dataLoaded.components[component].shift];
+				}
+
+				if (generic_raspberrypi.dataLoaded.components[component].segments[1][i + generic_raspberrypi.dataLoaded.components[component].shift] === undefined) {
+					document.getElementById('segment ' + 1 + '-' + i).innerHTML = '';
+				} else {
+					document.getElementById('segment ' + 1 + '-' + i).innerHTML = generic_raspberrypi.dataLoaded.components[component].segments[1][i + generic_raspberrypi.dataLoaded.components[component].shift];
+				}
 			}
 		}
 	}
