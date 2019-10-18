@@ -8,6 +8,8 @@ let generic_raspberrypi = {
 	xmlGenericPath: './plugins/device.simulator.raspberrypi/data/schematics/xml/',
 	svgLoaded: 'testLcd',
 	dataLoaded: null,
+	xmlProject: null,
+	svgProject: null,
 	vccPins: [0, 1, 3, 16],
 	gndPins: [5, 8, 13, 19, 24, 29, 33, 38],
 	pwmPins: [31, 32, 34],
@@ -289,15 +291,15 @@ let generic_raspberrypi = {
 	 * Load the SVG, parse the XML and set to default the components
 	 * @param  {String} name The name of the project to load
 	 */
-	loadProject: function(name, svg, xml) {
+	loadProject: function(name) {
 		try {
 
 			this.svgLoaded = name;
 
 			if (name === 'Own Project') {
 				let dom = new DOMParser;
-				let svgDocument = dom.parseFromString(svg, 'image/svg+xml');
-				let xmlDocument = dom.parseFromString(xml, 'image/svg+xml');
+				let svgDocument = dom.parseFromString(this.svgProject, 'image/svg+xml');
+				let xmlDocument = dom.parseFromString(this.xmlProject, 'image/svg+xml');
 
 				if (document.getElementById('raspberrypi_svg').firstElementChild === null) {
 					document.getElementById('raspberrypi_svg').appendChild(svgDocument.documentElement);

@@ -13,9 +13,7 @@
 			</v-list>
 		</v-navigation-drawer> -->
 
-		<v-btn block color="secondary" dark @click="addSvg">Add Project SVG</v-btn>
-		<v-btn block color="secondary" dark @click="addXml">Add Project XML</v-btn>
-		<v-btn block color="secondary" dark @click="loadProject">Load Project</v-btn>
+		<v-btn block color="secondary" dark @click="uploadOwnProject">Load Project</v-btn>
 
 		<template>
 			<v-data-table v-show="componentsTable.length !== 0" dense hide-default-footer no-data-text="There is no pin assigned!" :headers="headerTable" :items="componentsTable" item-key="pin" class="elevation-1"></v-data-table>
@@ -29,6 +27,7 @@
 <script>
 import $ from 'jquery';
 
+import LoadProject from './LoadProject.vue';
 import generic_raspberrypi from './../libraries/utils/generic_raspberrypi.js';
 
 export default {
@@ -53,10 +52,7 @@ export default {
 			}],
 
 			projectName: '',
-			projectData: {},
-
-			xmlOwnProject: null,
-			svgOwnProject: null
+			projectData: {}
 		}
 	},
 
@@ -72,11 +68,17 @@ export default {
 		 */
 		projectName(name) {
 			// Load the new project data
-			if (name === 'Own Project') {
-				generic_raspberrypi.loadProject(name, this.svgOwnProject, this.xmlOwnProject);
-			} else {
-				generic_raspberrypi.loadProject(name);
-			}
+			this.loadProject(name);
+		}
+	},
+
+	methods: {
+		/**
+		 * Load a new project with the SVG and the data required
+		 * @param  {String} name The name of the project to be loaded
+		 */
+		loadProject(name) {
+			generic_raspberrypi.loadProject(name);
 
 			this.projectData = generic_raspberrypi.dataLoaded;
 			this.componentsTable = [];
@@ -139,43 +141,18 @@ export default {
 					}
 				}
 			}
-		}
-	},
-
-	methods: {
-		async addSvg() {
-			let files = await this.studio.filesystem.openImportDialog({
-				title:'Import SVG',
-				filetypes:['svg']
-			});
-
-			if (files.length) {
-				let fileData = await this.studio.filesystem.readImportFile (files[0]);
-
-				this.svgOwnProject = fileData.toString();
-			}
 		},
 
-		async addXml() {
-			let files = await this.studio.filesystem.openImportDialog({
-				title:'Import XML',
-				filetypes:['xml']
+		/**
+		 * Upload files for a new project and then load it
+		 */
+		async uploadOwnProject() {
+			await this.studio.workspace.showDialog(LoadProject, {
+				width: 1000
 			});
 
-			if (files.length) {
-				let fileData = await this.studio.filesystem.readImportFile (files[0]);
-
-				this.xmlOwnProject = fileData.toString();
-			}
-		},
-
-		loadProject() {
-			if (this.xmlOwnProject === null) {
-				console.log('error no xml loaded');
-			} else if (this.svgOwnProject === null) {
-				console.log('error no svg loaded');
-			} else {
-				this.projectName = 'Own Project';
+			if (generic_raspberrypi.svgProject && generic_raspberrypi.xmlProject) {
+				this.loadProject('Own Project');
 			}
 		}
 	}
