@@ -66,12 +66,7 @@ let lcd =
 	};
 
 	this.close = function() {
-		return lcd_library.close(this.rs);
-		this.rs = null;
-		this.e = null;
-		this.data = null;
-		this.cols = null;
-		this.rows = null;
+		lcd_library.close(this.rs);
 	};
 };\n\n`;
 

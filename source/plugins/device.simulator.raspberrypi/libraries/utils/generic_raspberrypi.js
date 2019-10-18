@@ -338,21 +338,19 @@ let generic_raspberrypi = {
 			}
 
 			// Initialize the components
-			// for (let component of Object.keys(this.dataLoaded.components)) {
-			// 	if (this.dataLoaded.components[component].valid) {
-			// 		if (this.dataLoaded.components[component].name === 'led') {
-			// 			this.setLed(component, 0);
-			// 		} else if (this.dataLoaded.components[component].name === 'button') {
-			// 			this.setButton(component);
-			// 		} else if (this.dataLoaded.components[component].name === 'lcd') {
-			// 			this.setLcd(component);
-			// 		}
-			// 	}
-			// }
+			for (let component of Object.keys(this.dataLoaded.components)) {
+				if (this.dataLoaded.components[component].valid) {
+					if (this.dataLoaded.components[component].name === 'led') {
+						this.setLed(component, 0);
+					} else if (this.dataLoaded.components[component].name === 'button') {
+						this.setButton(component);
+					} else if (this.dataLoaded.components[component].name === 'lcd') {
+						this.setLcd(component);
+					}
+				}
+			}
 
-			// update_components();
-
-			console.log(this.dataLoaded);
+			update_components();
 		} catch(e) {
 			console.log(e);
 		}

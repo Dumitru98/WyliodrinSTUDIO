@@ -27,7 +27,7 @@
 <script>
 import $ from 'jquery';
 
-import LoadProject from './LoadProject.vue';
+import LoadProject from './dialogs/LoadProject.vue';
 import generic_raspberrypi from './../libraries/utils/generic_raspberrypi.js';
 
 export default {

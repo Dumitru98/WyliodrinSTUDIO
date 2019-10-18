@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import generic_raspberrypi from './../libraries/utils/generic_raspberrypi.js';
+import generic_raspberrypi from './../../libraries/utils/generic_raspberrypi.js';
 
 export default {
 	name: 'LoadProject',
