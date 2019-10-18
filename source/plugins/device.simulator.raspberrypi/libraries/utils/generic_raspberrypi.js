@@ -289,35 +289,51 @@ let generic_raspberrypi = {
 	 * Load the SVG, parse the XML and set to default the components
 	 * @param  {String} name The name of the project to load
 	 */
-	loadProject: function(name) {
+	loadProject: function(name, svg, xml) {
 		try {
+
 			this.svgLoaded = name;
 
-			// Load SVG file
-			let svgPath = this.svgGenericPath + name + '.svg';
-			let xhrSvg = new XMLHttpRequest();
+			if (name === 'Own Project') {
+				let dom = new DOMParser;
+				let svgDocument = dom.parseFromString(svg, 'image/svg+xml');
+				let xmlDocument = dom.parseFromString(xml, 'image/svg+xml');
 
-			xhrSvg.open('GET', svgPath, false);
-			xhrSvg.overrideMimeType('image/svg+xml');
-			xhrSvg.send('');
+				if (document.getElementById('raspberrypi_svg').firstElementChild === null) {
+					document.getElementById('raspberrypi_svg').appendChild(svgDocument.documentElement);
+				} else {
+					document.getElementById('raspberrypi_svg').replaceChild(svgDocument.documentElement, document.getElementById('raspberrypi_svg').firstElementChild);
+				}
 
-			// Put SVG file in HTML component
-			if (document.getElementById('raspberrypi_svg').firstElementChild === null) {
-				document.getElementById('raspberrypi_svg').appendChild(xhrSvg.responseXML.documentElement);
+				this.dataLoaded = generate_project_json(xmlDocument.documentElement, name);
 			} else {
-				document.getElementById('raspberrypi_svg').replaceChild(xhrSvg.responseXML.documentElement, document.getElementById('raspberrypi_svg').firstElementChild);
+
+				// Load SVG file
+				let svgPath = this.svgGenericPath + name + '.svg';
+				let xhrSvg = new XMLHttpRequest();
+
+				xhrSvg.open('GET', svgPath, false);
+				xhrSvg.overrideMimeType('image/svg+xml');
+				xhrSvg.send('');
+
+				// Put SVG file in HTML component
+				if (document.getElementById('raspberrypi_svg').firstElementChild === null) {
+					document.getElementById('raspberrypi_svg').appendChild(xhrSvg.responseXML.documentElement);
+				} else {
+					document.getElementById('raspberrypi_svg').replaceChild(xhrSvg.responseXML.documentElement, document.getElementById('raspberrypi_svg').firstElementChild);
+				}
+
+				// Load XML file
+				let xmlPath = this.xmlGenericPath + name + '.xml';
+				let xhrXml = new XMLHttpRequest();
+
+				xhrXml.open('GET', xmlPath, false);
+				xhrXml.overrideMimeType('image/svg+xml');
+				xhrXml.send('');
+
+				// Parse XML file and save the JSON generated
+				this.dataLoaded = generate_project_json(xhrXml.responseXML.documentElement, name);
 			}
-
-			// Load XML file
-			let xmlPath = this.xmlGenericPath + name + '.xml';
-			let xhrXml = new XMLHttpRequest();
-
-			xhrXml.open('GET', xmlPath, false);
-			xhrXml.overrideMimeType('image/svg+xml');
-			xhrXml.send('');
-
-			// Parse XML file and save the JSON generated
-			this.dataLoaded = generate_project_json(xhrXml.responseXML.documentElement, name);
 
 			// Initialize the components
 			// for (let component of Object.keys(this.dataLoaded.components)) {

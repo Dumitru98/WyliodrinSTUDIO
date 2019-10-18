@@ -11,6 +11,8 @@ export default function generate_project_json(xml, name) {
 	let nrOfComponents = 0;
 	let netArray = xml2json(xml).net;
 
+	console.log(netArray);
+
 	// Array of the connections, with the first position taken by the connections that
 	// don't include directly the RaspberryPi
 	let connections = [{
@@ -205,23 +207,29 @@ export default function generate_project_json(xml, name) {
 	// Check if all the components have at least 2 pins connected to the RaspberryPi
 	for (let component of Object.keys(components)) {
 
-		// Find the numbers of occurences of the component
-		let numberOfOccurences = 0;
-		for (let pin of Object.keys(projectJson)) {
-			if (projectJson[pin].components.indexOf(component) !== -1) {
-				numberOfOccurences ++;
+		// Check if the component is not the lcd
+		if (component.name === 'lcd') {
+			component.valid = true;
+		} else {
+			// Find the numbers of occurences of the component
+			let numberOfOccurences = 0;
+			for (let pin of Object.keys(projectJson)) {
+				if (projectJson[pin].components.indexOf(component) !== -1) {
+					numberOfOccurences ++;
+				}
 			}
-		}
 
-		// The number of occurences has to be at least 2
-		if (numberOfOccurences < 2) {
-			component.valid = false;
+			// The number of occurences has to be at least 2
+			if (numberOfOccurences < 2) {
+				component.valid = false;
+			}
 		}
 	}
 
 	return {
 		name: name,
 		components: components,
-		pins: projectJson
+		pins: projectJson,
+		assignedPins: []
 	};
 }

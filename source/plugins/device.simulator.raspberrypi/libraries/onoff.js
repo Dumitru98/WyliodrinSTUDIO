@@ -10,11 +10,11 @@ let onoff =
 		onoff.Gpio.create(pin, state);
 
 		this.read = function() {
-			return onoff.Gpio.read(this.pin);
+			return onoff.Gpio.read(this.pin, this.state);
 		};
 
 		this.readSync = function() {
-			return onoff.Gpio.readSync(this.pin);
+			return onoff.Gpio.readSync(this.pin, this.state);
 		};
 
 		this.write = function(value) {

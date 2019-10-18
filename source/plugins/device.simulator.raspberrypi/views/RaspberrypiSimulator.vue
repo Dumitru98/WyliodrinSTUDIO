@@ -13,6 +13,10 @@
 			</v-list>
 		</v-navigation-drawer> -->
 
+		<v-btn block color="secondary" dark @click="addSvg">Add Project SVG</v-btn>
+		<v-btn block color="secondary" dark @click="addXml">Add Project XML</v-btn>
+		<v-btn block color="secondary" dark @click="loadProject">Load Project</v-btn>
+
 		<template>
 			<v-data-table v-show="componentsTable.length !== 0" dense hide-default-footer no-data-text="There is no pin assigned!" :headers="headerTable" :items="componentsTable" item-key="pin" class="elevation-1"></v-data-table>
 		</template>
@@ -49,7 +53,10 @@ export default {
 			}],
 
 			projectName: '',
-			projectData: {}
+			projectData: {},
+
+			xmlOwnProject: null,
+			svgOwnProject: null
 		}
 	},
 
@@ -65,9 +72,13 @@ export default {
 		 */
 		projectName(name) {
 			// Load the new project data
-			generic_raspberrypi.loadProject(name);
-			this.projectData = generic_raspberrypi.dataLoaded;
+			if (name === 'Own Project') {
+				generic_raspberrypi.loadProject(name, this.svgOwnProject, this.xmlOwnProject);
+			} else {
+				generic_raspberrypi.loadProject(name);
+			}
 
+			this.projectData = generic_raspberrypi.dataLoaded;
 			this.componentsTable = [];
 
 			// Create the list needed for the table of components
@@ -108,7 +119,8 @@ export default {
 				// Create the LCD segments simulation and add them to the HTML
 				if (this.projectData.components[component].name === 'lcd') {
 					let leftPosition = 0;
-					let topPosition = 0;
+					let topPosition = 50;
+
 					for (let i = 0; i < 2; i ++) {
 						for (let j = 0; j < 16; j ++) {
 							let lcd = document.createElement('div');
@@ -126,6 +138,44 @@ export default {
 						}
 					}
 				}
+			}
+		}
+	},
+
+	methods: {
+		async addSvg() {
+			let files = await this.studio.filesystem.openImportDialog({
+				title:'Import SVG',
+				filetypes:['svg']
+			});
+
+			if (files.length) {
+				let fileData = await this.studio.filesystem.readImportFile (files[0]);
+
+				this.svgOwnProject = fileData.toString();
+			}
+		},
+
+		async addXml() {
+			let files = await this.studio.filesystem.openImportDialog({
+				title:'Import XML',
+				filetypes:['xml']
+			});
+
+			if (files.length) {
+				let fileData = await this.studio.filesystem.readImportFile (files[0]);
+
+				this.xmlOwnProject = fileData.toString();
+			}
+		},
+
+		loadProject() {
+			if (this.xmlOwnProject === null) {
+				console.log('error no xml loaded');
+			} else if (this.svgOwnProject === null) {
+				console.log('error no svg loaded');
+			} else {
+				this.projectName = 'Own Project';
 			}
 		}
 	}

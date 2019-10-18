@@ -7,6 +7,8 @@ let lcd =
 	this.cols = object.cols;
 	this.rows = object.rows;
 
+	lcd_library.create(this.rs, this.e, this.data);
+
 	this.print = function(value) {
 		lcd_library.print(this.rs, value);
 	};
@@ -64,7 +66,12 @@ let lcd =
 	};
 
 	this.close = function() {
-		return lcd_library.close();
+		return lcd_library.close(this.rs);
+		this.rs = null;
+		this.e = null;
+		this.data = null;
+		this.cols = null;
+		this.rows = null;
 	};
 };\n\n`;
 

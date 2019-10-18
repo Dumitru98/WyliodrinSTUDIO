@@ -122,7 +122,7 @@ export default function setup(options, imports, register) {
 				generic_raspberrypi.setDefault();
 
 				// Create the JS interpreter with the associated functions
-				let interpreter = new JSInterpreter(code, JSInterpreterLibrary(studio, device));
+				let interpreter = new JSInterpreter(code, JSInterpreterLibrary(studio, device, simulator));
 
 				// Set the variables of the device to 'running' and update the device
 				simulator.opperationsCounter = 0;

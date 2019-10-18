@@ -1,16 +1,40 @@
 import generic_raspberrypi from './../libraries/utils/generic_raspberrypi.js';
-import update_components from './../libraries/utils/update_components.js'
+import update_components from './../libraries/utils/update_components.js';
+
+let studio_n = null;
+let device_n = null;
+let simulator_n = null;
 
 let onoff_library = {
 	/**
+	 * It sets the studio, device and simulator objects
+	 * @param  {Object} studio The 'studio' object in the platform
+	 * @param  {Object} device The 'device' object in the platform
+	 * @param  {Object} simulator The 'simulator' object created for informations
+	 */
+	assign: function(studio, device, simulator) {
+		studio_n = studio;
+		device_n = device;
+		simulator_n = simulator;
+	},
+
+	/**
 	 * The 'onoff.Gpio.create' function for the JS interpreter
-	 * It sets the state of the a pin in the JSON of the parsed XML
+	 * It assign the pin and sets it's state in the JSON of the parsed XML
 	 * @param  {Integer} pin The number of the pin from the RaspberryPi
 	 * @param  {String} state The state of the pin, 'in' or 'out'
 	 */
 	create: function(pin, state) {
-		if (generic_raspberrypi.dataLoaded.pins[pin] && state) {
-			generic_raspberrypi.dataLoaded.pins[pin].state = state;
+		if (generic_raspberrypi.dataLoaded.assignedPins.includes(pin)) {
+			studio_n.console.write(device_n.id, `\r\n----------\r\nERROR: new Gpio(...)\r\nYou can't assign a pin already assigned\r\n----------\r\n`);
+			simulator_n.isRunning = false;
+			device_n.properties.isRunning = false;
+		} else {
+			generic_raspberrypi.dataLoaded.assignedPins.push(pin);
+
+			if (generic_raspberrypi.dataLoaded.pins[pin] && state) {
+				generic_raspberrypi.dataLoaded.pins[pin].state = state;
+			}
 		}
 	},
 
@@ -21,7 +45,7 @@ let onoff_library = {
 	 * @param  {Integer} pin The number of the pin from the RaspberryPi
 	 * @param  {String} state The state of the pin, 'in' or 'out'
 	 */
-	read: function(pin) {
+	read: function(pin, state) {
 		try {
 			console.log('read');
 		} catch(e) {
@@ -35,29 +59,35 @@ let onoff_library = {
 	 * @param  {Integer} pin The number of the pin from the RaspberryPi
 	 * @param  {String} state The state of the pin, 'in' or 'out'
 	 */
-	readSync: function(pin) {
+	readSync: function(pin, state) {
 		try {
-			let activeCircuit = true;
+			if (state === 'in') {
+				let activeCircuit = true;
 
-			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
-				if (generic_raspberrypi.dataLoaded.components[component].active === false) {
-					activeCircuit = false;
-					break;
+				for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+					if (generic_raspberrypi.dataLoaded.components[component].active === false) {
+						activeCircuit = false;
+						break;
+					}
 				}
-			}
 
-			if (activeCircuit) {
-				if (generic_raspberrypi.dataLoaded.pins[pin].activeLow) {
-					return 0;
+				if (activeCircuit) {
+					if (generic_raspberrypi.dataLoaded.pins[pin].activeLow) {
+						return 0;
+					} else {
+						return 1;
+					}
 				} else {
-					return 1;
+					if (generic_raspberrypi.dataLoaded.pins[pin].activeLow) {
+						return 1;
+					} else {
+						return 0;
+					}
 				}
 			} else {
-				if (generic_raspberrypi.dataLoaded.pins[pin].activeLow) {
-					return 1;
-				} else {
-					return 0;
-				}
+				studio_n.console.write(device_n.id, `\r\n----------\r\nERROR: onoff.Gpio.readSync()\r\nYou can't read from a pin that is assigned as "out"\r\n----------\r\n`);
+				simulator_n.isRunning = false;
+				device_n.properties.isRunning = false;
 			}
 		} catch(e) {
 			console.log(e);
@@ -89,19 +119,25 @@ let onoff_library = {
 	 */
 	writeSync: function(pin, state, value) {
 		try {
-			let output = value;
+			if (state === 'out') {
+				let output = value;
 
-			// Invert values in case of activeLow
-			if (generic_raspberrypi.dataLoaded.pins[pin].activeLow) {
-				if (output) {
-					output = 0;
-				} else {
-					output = 1;
+				// Invert values in case of activeLow
+				if (generic_raspberrypi.dataLoaded.pins[pin].activeLow) {
+					if (output) {
+						output = 0;
+					} else {
+						output = 1;
+					}
 				}
-			}
 
-			generic_raspberrypi.dataLoaded.pins[pin].value = output;
-			update_components();
+				generic_raspberrypi.dataLoaded.pins[pin].value = output;
+				update_components();
+			} else {
+				studio_n.console.write(device_n.id, `\r\n----------\r\nERROR: onoff.Gpio.writeSync()\r\nYou can't write on a pin that is assigned as "in"\r\n----------\r\n`);
+				simulator_n.isRunning = false;
+				device_n.properties.isRunning = false;
+			}
 		} catch(e) {
 			console.log(e);
 		}

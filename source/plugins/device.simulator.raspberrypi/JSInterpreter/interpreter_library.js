@@ -8,7 +8,9 @@ import lcd_library from './lcd_library.js'
  * @param  {Object} studio The 'studio' object in the platform
  * @param  {Object} device The 'device' object in the platform
  */
-export default function interpreterLibrary (studio, device) {
+export default function interpreterLibrary (studio, device, simulator) {
+	onoff_library.assign(studio, device, simulator);
+	lcd_library.assign(studio, device, simulator);
 	
 	/**
 	 * Set the functions for the JS interpreter
@@ -74,6 +76,7 @@ export default function interpreterLibrary (studio, device) {
 		// Create the object LCD with the given structure and set all the functions
 		let lcd = interpreter.createObjectProto(interpreter.OBJECT_PROTO);
 		interpreter.setProperty(scope, 'lcd_library', lcd);
+		interpreter.setProperty(lcd, 'create', interpreter.createNativeFunction(lcd_library.create));
 		interpreter.setProperty(lcd, 'print', interpreter.createNativeFunction(lcd_library.print));
 		interpreter.setProperty(lcd, 'clear', interpreter.createNativeFunction(lcd_library.clear));
 		interpreter.setProperty(lcd, 'home', interpreter.createNativeFunction(lcd_library.home));
