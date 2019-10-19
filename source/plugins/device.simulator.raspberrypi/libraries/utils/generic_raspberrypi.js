@@ -1,22 +1,35 @@
 import $ from 'jquery';
+
 import generate_project_json from './generate_project_json.js';
 import update_components from './update_components.js';
 
 let generic_raspberrypi = {
 	name: 'Raspberry Pi 3 Model B v1.2',
+
+	nameStartingProject: 'testLcd',
+
+	// Generic data
+	startingNameForTutorials: 'test',
 	svgGenericPath: './plugins/device.simulator.raspberrypi/data/schematics/svg/',
 	xmlGenericPath: './plugins/device.simulator.raspberrypi/data/schematics/xml/',
-	svgLoaded: 'testLcd',
+
+	// Data about the project loaded at the moment
+	nameLoaded: null,
+	svgLoaded: null,
 	dataLoaded: null,
-	xmlProject: null,
-	svgProject: null,
+
+	// Data about the project loaded by the user
+	ownProject: {
+		name: null,
+		svg: null,
+		xml: null,
+	},
+
+	// Generic data about RaspberryPi pins
 	vccPins: [0, 1, 3, 16],
 	gndPins: [5, 8, 13, 19, 24, 29, 33, 38],
 	pwmPins: [31, 32, 34],
 	i2cPins: [2, 4],
-
-	// The dictionary with the names of the projects that can be loaded
-	projectsName: {},
 
 	// Colors dictionary for HSL format
 	ledColors: {
@@ -293,13 +306,13 @@ let generic_raspberrypi = {
 	 */
 	loadProject: function(name) {
 		try {
+			this.nameLoaded = name;
 
-			this.svgLoaded = name;
-
-			if (name === 'Own Project') {
+			if (name.indexOf(this.startingNameForTutorials) !== 0) {
+				// Parse SVG and XML files
 				let dom = new DOMParser;
-				let svgDocument = dom.parseFromString(this.svgProject, 'image/svg+xml');
-				let xmlDocument = dom.parseFromString(this.xmlProject, 'image/svg+xml');
+				let svgDocument = dom.parseFromString(this.ownProject.svg, 'image/svg+xml');
+				let xmlDocument = dom.parseFromString(this.ownProject.xml, 'image/svg+xml');
 
 				if (document.getElementById('raspberrypi_svg').firstElementChild === null) {
 					document.getElementById('raspberrypi_svg').appendChild(svgDocument.documentElement);
@@ -307,7 +320,9 @@ let generic_raspberrypi = {
 					document.getElementById('raspberrypi_svg').replaceChild(svgDocument.documentElement, document.getElementById('raspberrypi_svg').firstElementChild);
 				}
 
-				this.dataLoaded = generate_project_json(xmlDocument.documentElement, name);
+				// Save the SVG document and the XML data
+				this.svgLoaded = svgDocument.documentElement;
+				this.dataLoaded = generate_project_json(xmlDocument.documentElement);
 			} else {
 
 				// Load SVG file
@@ -325,6 +340,9 @@ let generic_raspberrypi = {
 					document.getElementById('raspberrypi_svg').replaceChild(xhrSvg.responseXML.documentElement, document.getElementById('raspberrypi_svg').firstElementChild);
 				}
 
+				// Save the SVG document
+				this.svgLoaded = xhrSvg.responseXML.documentElement;
+
 				// Load XML file
 				let xmlPath = this.xmlGenericPath + name + '.xml';
 				let xhrXml = new XMLHttpRequest();
@@ -334,7 +352,7 @@ let generic_raspberrypi = {
 				xhrXml.send('');
 
 				// Parse XML file and save the JSON generated
-				this.dataLoaded = generate_project_json(xhrXml.responseXML.documentElement, name);
+				this.dataLoaded = generate_project_json(xhrXml.responseXML.documentElement);
 			}
 
 			// Initialize the components
@@ -350,7 +368,7 @@ let generic_raspberrypi = {
 				}
 			}
 
-			update_components();
+			// update_components();
 		} catch(e) {
 			console.log(e);
 		}

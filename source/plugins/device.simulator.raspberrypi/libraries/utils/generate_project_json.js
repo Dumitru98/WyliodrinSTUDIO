@@ -6,12 +6,10 @@ import generic_raspberrypi from './generic_raspberrypi.js';
  * @param  {String} xml The XML file to be parsed
  * @param  {String} name The name of the project to load
  */
-export default function generate_project_json(xml, name) {
+export default function generate_project_json(xml) {
 	let projectJson = {};
 	let nrOfComponents = 0;
 	let netArray = xml2json(xml).net;
-
-	console.log(netArray);
 
 	// Array of the connections, with the first position taken by the connections that
 	// don't include directly the RaspberryPi
@@ -227,7 +225,6 @@ export default function generate_project_json(xml, name) {
 	}
 
 	return {
-		name: name,
 		components: components,
 		pins: projectJson,
 		assignedPins: []

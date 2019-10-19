@@ -1,9 +1,10 @@
 <template>
 	<v-card>
-		<v-btn block color="secondary" dark @click="addSvg">Add Project SVG</v-btn>
-		<v-btn block color="secondary" dark @click="addXml">Add Project XML</v-btn>
-		<v-btn block color="secondary" dark @click="loadProject">Load Project</v-btn>
-		<v-btn block color="secondary" dark @click="close">Close</v-btn>
+		<v-text-field v-model="nameOwnProject" dense label="Project Name"></v-text-field>
+		<v-btn block color="secondary" dark @click="addSvg()">Add Project SVG</v-btn>
+		<v-btn block color="secondary" dark @click="addXml()">Add Project XML</v-btn>
+		<v-btn block color="secondary" dark @click="loadProject()">Load Project</v-btn>
+		<v-btn block color="secondary" dark @click="close()">Close</v-btn>
 	</v-card>
 </template>
 
@@ -15,8 +16,9 @@ export default {
 
 	data() {
 		return {
-			xmlOwnProject: null,
-			svgOwnProject: null
+			nameOwnProject: null,
+			svgOwnProjectString: null,
+			xmlOwnProjectString: null
 		}
 	},
 
@@ -33,7 +35,7 @@ export default {
 			if (files.length) {
 				let fileData = await this.studio.filesystem.readImportFile (files[0]);
 
-				this.svgOwnProject = fileData.toString();
+				this.svgOwnProjectString = fileData.toString();
 			}
 		},
 
@@ -49,12 +51,12 @@ export default {
 			if (files.length) {
 				let fileData = await this.studio.filesystem.readImportFile (files[0]);
 
-				this.xmlOwnProject = fileData.toString();
+				this.xmlOwnProjectString = fileData.toString();
 			}
 		},
 
 		/**
-		 * Save the SVG and the XML files in the project data
+		 * Save the name, the SVG and the XML files in the project data
 		 */
 		loadProject() {
 			if (this.xmlOwnProject === null) {
@@ -62,8 +64,13 @@ export default {
 			} else if (this.svgOwnProject === null) {
 				console.log('error no svg loaded');
 			} else {
-				generic_raspberrypi.svgProject = this.svgOwnProject;
-				generic_raspberrypi.xmlProject = this.xmlOwnProject;
+				if (this.nameOwnProject === '' || this.nameOwnProject === null) {
+					this.nameOwnProject = 'My Project';
+				}
+
+				generic_raspberrypi.ownProject.name = this.nameOwnProject;
+				generic_raspberrypi.ownProject.svg = this.svgOwnProjectString;
+				generic_raspberrypi.ownProject.xml = this.xmlOwnProjectString;
 
 				this.close();
 			}
