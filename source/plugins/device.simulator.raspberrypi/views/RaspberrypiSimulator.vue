@@ -5,14 +5,14 @@
 			<v-toolbar-title>{{ projectNameToBeShown }}</v-toolbar-title>
 		</v-toolbar>
 
-		<v-navigation-drawer v-if="projectsList" v-model="projectsListShow" absolute temporary width="500" dark>
+		<v-navigation-drawer v-if="projectsList" v-model="projectsListShow" absolute temporary width="400" dark>
 			<v-list>
 				<v-btn block color="secondary" dark @click="projectsListShow = !projectsListShow">Close</v-btn>
 				<v-btn block color="secondary" dark @click="uploadOwnProject(); projectsListShow = !projectsListShow">Load Project</v-btn>
 
 				<v-list-item v-for="(project, index) in projectsList" :key="index" @click="projectName = project.originalName; projectsListShow = !projectsListShow">
 					<v-list-item-title>{{ project.name }}</v-list-item-title>
-					<v-list-item-avatar size="150">
+					<v-list-item-avatar size=150>
 						<v-img :src="svgGenericPath + project.svgPath + '.svg'"></v-img>
 					</v-list-item-avatar>
 				</v-list-item>
@@ -22,6 +22,7 @@
 		<v-data-table v-show="componentsTable.length !== 0" dense hide-default-footer :headers="headerTable" :items="componentsTable" item-key="pin" class="elevation-1"></v-data-table>
 
 		<div id="raspberrypi_svg"></div>
+
 		<div id="lcd_display"></div>
 	</div>
 </template>
@@ -34,6 +35,8 @@ import generic_raspberrypi from './../libraries/utils/generic_raspberrypi.js';
 
 export default {
 	name: 'RaspberrypiSimulator',
+
+	props: ['active'],
 
 	data() {
 		return {
@@ -57,9 +60,11 @@ export default {
 
 			projectNameToBeShown: null,
 			projectName: null,
-			projectData: null
+			projectData: null,
+			lcdComponents: null
 		}
 	},
+
 
 	/**
 	 * Read and create the list of projects, as well as load the initial project
@@ -101,6 +106,14 @@ export default {
 		projectName(name) {
 			// Load the new project data
 			this.loadProject(name);
+		},
+
+		active() {
+			if (this.active) {
+				setTimeout (() => {
+					this.loadLcdDisplay();
+				}, 250);
+			}
 		}
 	},
 
@@ -110,7 +123,6 @@ export default {
 		 * @param  {String} name The name of the project to be loaded
 		 */
 		loadProject(name) {
-			// $.svg.addExtension('graph', SVGGraph);
 
 			// Parse the name to be shown on the screen if needed
 			this.projectNameToBeShown = name;
@@ -123,6 +135,9 @@ export default {
 			this.projectData = generic_raspberrypi.dataLoaded;
 
 			this.componentsTable = [];
+			while (document.getElementById('lcd_display').firstChild) {
+				document.getElementById('lcd_display').removeChild(document.getElementById('lcd_display').firstChild);
+			}
 
 			// Create the list needed for the table of components
 			for (let component of Object.keys(this.projectData.components)) {
@@ -136,10 +151,13 @@ export default {
 				let pins = '';
 				for (let pin of Object.keys(this.projectData.pins)) {
 					if (this.projectData.pins[pin].id !== 'gnd' && this.projectData.pins[pin].components.includes(component)) {
-						if (pins === '') {
-							pins += pin;
-						} else {
+						if (pins !== '') {
 							pins += ', ';
+						}
+
+						if (pin !== '3v3' && pin !== '5v') {
+							pins += generic_raspberrypi.parsePinToGpio(pin);
+						} else {
 							pins += pin;
 						}
 					}
@@ -160,13 +178,44 @@ export default {
 				this.componentsTable.push(newComponent);
 
 				// Create the LCD segments simulation and add them to the HTML
+				this.lcdComponents = [];
 				if (this.projectData.components[component].name === 'lcd') {
-					let svgLeftPosition = 0;
-					let svgTopPosition = 0;
+					this.lcdComponents.push(component);
+				}
+			}
 
+			if (this.active) {
+				setTimeout (() => {
+					this.loadLcdDisplay();
+				}, 250);
+			}
+		},
+
+		/**
+		 * Upload files for a new project and then load it
+		 */
+		async uploadOwnProject() {
+			let state = await this.studio.workspace.showDialog(LoadProject, {
+				width: 1000
+			});
+
+			if (state) {
+				this.loadProject(generic_raspberrypi.ownProject.name);
+			}
+		},
+
+		loadLcdDisplay() {
+			for (let component of this.lcdComponents) {
+				let elementLcd = $(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"]');
+
+				if (elementLcd[0]) {
+					let position = elementLcd[0].getBoundingClientRect();
+					let svgLeftPosition = position.left + 37;
+					let svgTopPosition = position.top - 92;
+					
 					let lcd = document.createElement('g');
 					lcd.style.cssText = 'position: absolute; left:' + svgLeftPosition + 'px; top: ' + svgTopPosition + 'px;';
-					lcd.id = 'segments_container';
+					lcd.id = component;
 
 					let leftPosition = 0;
 					let topPosition = 0;
@@ -176,37 +225,20 @@ export default {
 
 							if (j === 0 && i !== 0) {
 								leftPosition = 0;
-								topPosition += 21;
+								topPosition += 22;
 							}
 
-							lcdSegment.style.cssText = 'position: absolute; left: ' + leftPosition + 'px; top: ' + topPosition + 'px; width: 12px; height: 20px; text-align: center; font-size: 15px; background: #009628';
+							lcdSegment.style.cssText = 'position: absolute; left: ' + leftPosition + 'px; top: ' + topPosition + 'px; width: 13.3px; height: 21px; text-align: center; font-size: 15px; background: #009628';
 							lcdSegment.id = 'segment ' + i + '-' + j;
 							lcd.appendChild(lcdSegment);
 
-							leftPosition += 13;
+							leftPosition += 14.3;
 						}
 					}
 
-					// document.getElementById('lcd_display').appendChild(lcd);
-
-					let test = $(document.createElement('g')).css('background-color', 'red').css('width', '1000').css('height', '1000');
-					
-
-					// find('g[partID="' + component + '"]')
-					console.log($(document.querySelector('#raspberrypi_svg').firstElementChild).find('g[partID="' + component + '"]').css('left'));
+					document.getElementById('lcd_display').appendChild(lcd);
 				}
 			}
-		},
-
-		/**
-		 * Upload files for a new project and then load it
-		 */
-		async uploadOwnProject() {
-			await this.studio.workspace.showDialog(LoadProject, {
-				width: 1000
-			});
-
-			this.loadProject(generic_raspberrypi.ownProject.name);
 		}
 	}
 }

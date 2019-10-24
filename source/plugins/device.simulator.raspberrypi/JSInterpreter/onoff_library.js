@@ -25,15 +25,17 @@ let onoff_library = {
 	 * @param  {String} state The state of the pin, 'in' or 'out'
 	 */
 	create: function(pin, state) {
-		if (generic_raspberrypi.dataLoaded.assignedPins.includes(pin)) {
+		let pinNumber = generic_raspberrypi.parseGpioToPin(pin);
+
+		if (generic_raspberrypi.dataLoaded.assignedPins.includes(pinNumber)) {
 			studio_n.console.write(device_n.id, `\r\n----------\r\nERROR: new Gpio(...)\r\nYou can't assign a pin already assigned\r\n----------\r\n`);
 			simulator_n.isRunning = false;
 			device_n.properties.isRunning = false;
 		} else {
-			generic_raspberrypi.dataLoaded.assignedPins.push(pin);
+			generic_raspberrypi.dataLoaded.assignedPins.push(pinNumber);
 
-			if (generic_raspberrypi.dataLoaded.pins[pin] && state) {
-				generic_raspberrypi.dataLoaded.pins[pin].state = state;
+			if (generic_raspberrypi.dataLoaded.pins[pinNumber] && state) {
+				generic_raspberrypi.dataLoaded.pins[pinNumber].state = state;
 			}
 		}
 	},
@@ -61,10 +63,12 @@ let onoff_library = {
 	 */
 	readSync: function(pin, state) {
 		try {
+			let pinNumber = generic_raspberrypi.parseGpioToPin(pin);
+
 			if (state === 'in') {
 				let activeCircuit = true;
 
-				for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+				for (let component of generic_raspberrypi.dataLoaded.pins[pinNumber].components) {
 					if (generic_raspberrypi.dataLoaded.components[component].active === false) {
 						activeCircuit = false;
 						break;
@@ -72,13 +76,13 @@ let onoff_library = {
 				}
 
 				if (activeCircuit) {
-					if (generic_raspberrypi.dataLoaded.pins[pin].activeLow) {
+					if (generic_raspberrypi.dataLoaded.pins[pinNumber].activeLow) {
 						return 0;
 					} else {
 						return 1;
 					}
 				} else {
-					if (generic_raspberrypi.dataLoaded.pins[pin].activeLow) {
+					if (generic_raspberrypi.dataLoaded.pins[pinNumber].activeLow) {
 						return 1;
 					} else {
 						return 0;
@@ -119,11 +123,13 @@ let onoff_library = {
 	 */
 	writeSync: function(pin, state, value) {
 		try {
+			let pinNumber = generic_raspberrypi.parseGpioToPin(pin);
+
 			if (state === 'out') {
 				let output = value;
 
 				// Invert values in case of activeLow
-				if (generic_raspberrypi.dataLoaded.pins[pin].activeLow) {
+				if (generic_raspberrypi.dataLoaded.pins[pinNumber].activeLow) {
 					if (output) {
 						output = 0;
 					} else {
@@ -131,7 +137,7 @@ let onoff_library = {
 					}
 				}
 
-				generic_raspberrypi.dataLoaded.pins[pin].value = output;
+				generic_raspberrypi.dataLoaded.pins[pinNumber].value = output;
 				update_components();
 			} else {
 				studio_n.console.write(device_n.id, `\r\n----------\r\nERROR: onoff.Gpio.writeSync()\r\nYou can't write on a pin that is assigned as "in"\r\n----------\r\n`);
@@ -189,7 +195,7 @@ let onoff_library = {
 	 */
 	direction: function(pin) {
 		try {
-			return generic_raspberrypi.dataLoaded.pins[pin].state;
+			return generic_raspberrypi.dataLoaded.pins[generic_raspberrypi.parseGpioToPin(pin)].state;
 		} catch(e) {
 			console.log(e);
 		}
@@ -204,7 +210,7 @@ let onoff_library = {
 	 */
 	setDirection: function(pin, value) {
 		try {
-			generic_raspberrypi.dataLoaded.pins[pin].state = value;
+			generic_raspberrypi.dataLoaded.pins[generic_raspberrypi.parseGpioToPin(pin)].state = value;
 		} catch(e) {
 			console.log(e);
 		}
@@ -217,7 +223,7 @@ let onoff_library = {
 	 */
 	activeLow: function(pin) {
 		try {
-			return generic_raspberrypi.dataLoaded.pins[pin].activeLow;
+			return generic_raspberrypi.dataLoaded.pins[generic_raspberrypi.parseGpioToPin(pin)].activeLow;
 		} catch(e) {
 			console.log(e);
 		}
@@ -231,12 +237,13 @@ let onoff_library = {
 	 */
 	setActiveLow: function(pin, value) {
 		try {
-			generic_raspberrypi.dataLoaded.pins[pin].activeLow = value;
+			let pinNumber = generic_raspberrypi.parseGpioToPin(pin);
+			generic_raspberrypi.dataLoaded.pins[pinNumber].activeLow = value;
 
-			if (generic_raspberrypi.dataLoaded.pins[pin].value) {
-				generic_raspberrypi.dataLoaded.pins[pin].value = 0;
+			if (generic_raspberrypi.dataLoaded.pins[pinNumber].value) {
+				generic_raspberrypi.dataLoaded.pins[pinNumber].value = 0;
 			} else {
-				generic_raspberrypi.dataLoaded.pins[pin].value = 1;
+				generic_raspberrypi.dataLoaded.pins[pinNumber].value = 1;
 			}
 
 			update_components();

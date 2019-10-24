@@ -203,23 +203,27 @@ export default function generate_project_json(xml) {
 	}
 	
 	// Check if all the components have at least 2 pins connected to the RaspberryPi
+	let warning = null;
 	for (let component of Object.keys(components)) {
 
-		// Check if the component is not the lcd
-		if (component.name === 'lcd') {
-			component.valid = true;
-		} else {
-			// Find the numbers of occurences of the component
-			let numberOfOccurences = 0;
-			for (let pin of Object.keys(projectJson)) {
-				if (projectJson[pin].components.indexOf(component) !== -1) {
-					numberOfOccurences ++;
-				}
+		// Find the numbers of occurences of the component
+		let pins = [];
+		for (let pin of Object.keys(projectJson)) {
+			if (projectJson[pin].components.indexOf(component) !== -1) {
+				pins.push(pin);
 			}
+		}
 
-			// The number of occurences has to be at least 2
-			if (numberOfOccurences < 2) {
-				component.valid = false;
+		// The number of occurences has to be at least 2
+		if (components[component].name !== 'lcd') {
+			if (pins.length < 2) {
+				components[component].valid = false;
+				warning = 'incomplete';
+			}
+		} else {
+			if (pins.length < 6) {
+				components[component].valid = false;
+				warning = 'incomplete';
 			}
 		}
 	}
@@ -227,6 +231,7 @@ export default function generate_project_json(xml) {
 	return {
 		components: components,
 		pins: projectJson,
-		assignedPins: []
+		assignedPins: [],
+		warning: warning
 	};
 }

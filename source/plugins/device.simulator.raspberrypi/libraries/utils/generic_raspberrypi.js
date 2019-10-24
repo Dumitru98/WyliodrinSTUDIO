@@ -6,7 +6,7 @@ import update_components from './update_components.js';
 let generic_raspberrypi = {
 	name: 'Raspberry Pi 3 Model B v1.2',
 
-	nameStartingProject: 'testLcd',
+	nameStartingProject: 'testLcdPosition',
 
 	// Generic data
 	startingNameForTutorials: 'test',
@@ -211,6 +211,26 @@ let generic_raspberrypi = {
 	},
 
 	/**
+	 * Return the GPIO number of the pin
+	 * @param  {Integer} pinNumber The pin number on the RaspberryPi
+	 */
+	parsePinToGpio(pinNumber) {
+		return this.pins[pinNumber].name.substr(4);
+	},
+
+	/**
+	 * Return the number of the pin
+	 * @param  {Integer} pinGpio The GPIO pin on the RaspberryPi
+	 */
+	parseGpioToPin(pinGpio) {
+		for (let pin of Object.keys(this.pins)) {
+			if (this.pins[pin].name === 'GPIO' + pinGpio) {
+				return pin;
+			}
+		}
+	},
+
+	/**
 	 * Set the color and the value of the led
 	 * @param  {String} component The id of the led
 	 * @param  {Integer} value The value that the led should have, '0' of '1'
@@ -309,20 +329,15 @@ let generic_raspberrypi = {
 			this.nameLoaded = name;
 
 			if (name.indexOf(this.startingNameForTutorials) !== 0) {
-				// Parse SVG and XML files
-				let dom = new DOMParser;
-				let svgDocument = dom.parseFromString(this.ownProject.svg, 'image/svg+xml');
-				let xmlDocument = dom.parseFromString(this.ownProject.xml, 'image/svg+xml');
-
 				if (document.getElementById('raspberrypi_svg').firstElementChild === null) {
-					document.getElementById('raspberrypi_svg').appendChild(svgDocument.documentElement);
+					document.getElementById('raspberrypi_svg').appendChild(this.ownProject.svg);
 				} else {
-					document.getElementById('raspberrypi_svg').replaceChild(svgDocument.documentElement, document.getElementById('raspberrypi_svg').firstElementChild);
+					document.getElementById('raspberrypi_svg').replaceChild(this.ownProject.svg, document.getElementById('raspberrypi_svg').firstElementChild);
 				}
 
-				// Save the SVG document and the XML data
-				this.svgLoaded = svgDocument.documentElement;
-				this.dataLoaded = generate_project_json(xmlDocument.documentElement);
+				// Save the SVG document
+				this.svgLoaded = this.ownProject.svg;
+				this.dataLoaded = this.ownProject.xml;
 			} else {
 
 				// Load SVG file
@@ -367,8 +382,6 @@ let generic_raspberrypi = {
 					}
 				}
 			}
-
-			// update_components();
 		} catch(e) {
 			console.log(e);
 		}

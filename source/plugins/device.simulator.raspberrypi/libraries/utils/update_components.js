@@ -39,7 +39,7 @@ export default function update_components() {
 	}
 
 	for (let component of Object.keys(generic_raspberrypi.dataLoaded.components)) {
-		if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
+		if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd' && generic_raspberrypi.dataLoaded.components[component].active) {
 			for (let i = 0; i < 16; i ++) {
 				if (generic_raspberrypi.dataLoaded.components[component].segments[0][i + generic_raspberrypi.dataLoaded.components[component].shift] === undefined) {
 					document.getElementById('segment ' + 0 + '-' + i).innerHTML = '';

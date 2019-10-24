@@ -1,15 +1,32 @@
 <template>
 	<v-card>
 		<v-text-field v-model="nameOwnProject" dense label="Project Name"></v-text-field>
-		<v-btn block color="secondary" dark @click="addSvg()">Add Project SVG</v-btn>
-		<v-btn block color="secondary" dark @click="addXml()">Add Project XML</v-btn>
-		<v-btn block color="secondary" dark @click="loadProject()">Load Project</v-btn>
+
+		<v-btn color="secondary" dark @click="addSvg()">Add Project SVG</v-btn>
+		<v-icon v-if="svgNotLoaded" @click="addSvg()">mdi-file-plus</v-icon>
+		<v-progress-circular v-if="svgLoading" indeterminate color="red"></v-progress-circular>
+		<v-icon v-if="!svgNotLoaded && !svgLoading">mdi-checkbox-marked-circle</v-icon>
+		<v-btn v-if="!svgNotLoaded && !svgLoading" @click="removeSvg()"><v-icon>mdi-delete</v-icon></v-btn>
+
+		<v-btn color="secondary" dark @click="addXml()">Add Project XML</v-btn>
+		<v-icon v-if="xmlNotLoaded" @click="addXml()">mdi-file-plus</v-icon>
+		<v-progress-circular v-if="xmlLoading" indeterminate color="red"></v-progress-circular>
+		<v-icon v-if="!xmlNotLoaded && !xmlLoading">mdi-checkbox-marked-circle</v-icon>
+		<v-btn v-if="!xmlNotLoaded && !xmlLoading" @click="removeXml()"><v-icon>mdi-delete</v-icon></v-btn>
+
+		<v-alert v-if="showWarning" type="warning">{{ warning }}</v-alert>
+		<v-alert v-if="showError" type="error">{{ error }}</v-alert>
+
+		<v-btn v-if="!showError" block color="secondary" dark @click="loadProject()">Load Project</v-btn>
 		<v-btn block color="secondary" dark @click="close()">Close</v-btn>
 	</v-card>
 </template>
 
 <script>
+import $ from 'jquery';
+
 import generic_raspberrypi from './../../libraries/utils/generic_raspberrypi.js';
+import generate_project_json from './../../libraries/utils/generate_project_json.js';
 
 export default {
 	name: 'LoadProject',
@@ -18,7 +35,20 @@ export default {
 		return {
 			nameOwnProject: null,
 			svgOwnProjectString: null,
-			xmlOwnProjectString: null
+			xmlOwnProjectString: null,
+
+			svgDocument: null,
+			xmlParsed: null,
+			showWarning: false,
+			warning: null,
+			showError: false,
+			error: null,
+
+			svgNotLoaded: true,
+			svgLoading: false,
+
+			xmlNotLoaded: true,
+			xmlLoading: false
 		}
 	},
 
@@ -33,10 +63,30 @@ export default {
 			});
 
 			if (files.length) {
+				this.svgLoading = true;
+				this.svgNotLoaded = false;
+
 				let fileData = await this.studio.filesystem.readImportFile (files[0]);
 
 				this.svgOwnProjectString = fileData.toString();
+
+				this.svgLoading = false;
+
+				if (this.xmlOwnProjectString) {
+					this.checkXmlAndSvg();
+				}
 			}
+		},
+
+		/**
+		 * Remove the SVG file loaded
+		 */
+		removeSvg() {
+			this.svgOwnProjectString = null;
+			this.svgDocument = null;
+
+			this.svgNotLoaded = true;
+			this.svgLoading = false;
 		},
 
 		/**
@@ -49,9 +99,62 @@ export default {
 			});
 
 			if (files.length) {
+				this.xmlLoading = true;
+				this.xmlNotLoaded = false;
+
 				let fileData = await this.studio.filesystem.readImportFile (files[0]);
 
 				this.xmlOwnProjectString = fileData.toString();
+
+				this.xmlLoading = false;
+
+				if (this.svgOwnProjectString) {
+					this.checkXmlAndSvg();
+				}
+			}
+		},
+
+		/**
+		 * Remove the XML file loaded
+		 */
+		removeXml() {
+			this.xmlOwnProjectString = null;
+			this.xmlDocument = null;
+
+			this.xmlNotLoaded = true;
+			this.xmlLoading = false;
+		},
+
+		/**
+		 * Check the SVG and the XML match
+		 */
+		checkXmlAndSvg() {
+			this.warning = null;
+			this.showWarning = false;
+			this.error = null;
+			this.showError = false;
+
+			let dom = new DOMParser;
+			this.svgDocument = dom.parseFromString(this.svgOwnProjectString, 'image/svg+xml').documentElement;
+			let xmlDocument = dom.parseFromString(this.xmlOwnProjectString, 'image/svg+xml').documentElement;
+			this.xmlParsed = generate_project_json(xmlDocument);
+
+			let svgMatchXml = true;
+			for (let component of Object.keys(this.xmlParsed.components)) {
+				if ($(this.svgDocument).find('g[partID="' + component + '"]').length === 0) {
+					svgMatchXml = false;
+				}
+			}
+			
+			if (svgMatchXml === false) {
+				this.error = 'The SVG file does not match the XML file!';
+				this.showError = true;
+			} else if (this.xmlParsed.warning === 'incomplete') {
+				this.warning = 'Your circuit is NOT complete! Some components might not work, so please check again your circuit!';
+				this.showWarning = true;
+			} else {
+				this.warning = null;
+				this.showWarning = false;
 			}
 		},
 
@@ -59,28 +162,32 @@ export default {
 		 * Save the name, the SVG and the XML files in the project data
 		 */
 		loadProject() {
-			if (this.xmlOwnProject === null) {
-				console.log('error no xml loaded');
-			} else if (this.svgOwnProject === null) {
-				console.log('error no svg loaded');
+			if (this.xmlParsed === null) {
+				this.showWarning = false;
+				this.warning = 'The XML file is not loaded!';
+				this.showWarning = true;
+			} else if (this.svgDocument === null) {
+				this.showWarning = false;
+				this.warning = 'The SVG file is not loaded!';
+				this.showWarning = true;
 			} else {
 				if (this.nameOwnProject === '' || this.nameOwnProject === null) {
 					this.nameOwnProject = 'My Project';
 				}
 
 				generic_raspberrypi.ownProject.name = this.nameOwnProject;
-				generic_raspberrypi.ownProject.svg = this.svgOwnProjectString;
-				generic_raspberrypi.ownProject.xml = this.xmlOwnProjectString;
+				generic_raspberrypi.ownProject.svg = this.svgDocument;
+				generic_raspberrypi.ownProject.xml = this.xmlParsed;
 
-				this.close();
+				this.close('load');
 			}
 		},
 
 		/**
 		 * Close the dialog
 		 */
-		close() {
-			this.$root.$emit ('submit', undefined);
+		close(object) {
+			this.$root.$emit ('submit', object);
 		}
 	}
 }

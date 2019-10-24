@@ -26,38 +26,69 @@ let lcd_library = {
 	 * @param  {Object} data Contains the number pins for the data-bus for the LCD
 	 */
 	create: function(rs, e, data) {
-		let correctPins = true;
+		let rsNumber = generic_raspberrypi.parseGpioToPin(rs);
+		let eNumber = generic_raspberrypi.parseGpioToPin(e);
+		let dataNumber = [];
+		for (let pin of data) {
+			dataNumber.push(generic_raspberrypi.parseGpioToPin(pin));
+		}
 
-		if (rs !== 21 || (e !== 1 && e !== 3) || 
-			data.properties[0] !== 15 || 
-			data.properties[1] !== 10 || 
-			data.properties[2] !== 11 || 
-			data.properties[3] !== 14) {
+		let correctPins = true;
+		let pins = [];
+
+		for (let pin of dataNumber) {
+			pins.push(pin);
+		}
+		pins.push(rsNumber);
+		pins.push(eNumber);
+
+		if ([...new Set(pins)].length === pins.length) { 
+			for (let pin of dataNumber) {
+				if (generic_raspberrypi.vccPins.indexOf(pin) !== -1 ||
+					generic_raspberrypi.gndPins.indexOf(pin) !== -1) {
+					correctPins = false;
+				}
+			}
+
+			if (generic_raspberrypi.vccPins.indexOf(rsNumber) !== -1 ||
+				generic_raspberrypi.gndPins.indexOf(rsNumber) !== -1) {
+				correctPins = false;
+			}
+
+			if (generic_raspberrypi.vccPins.indexOf(eNumber) !== -1 ||
+				generic_raspberrypi.gndPins.indexOf(eNumber) !== -1) {
+				correctPins = false;
+			}
+		} else {
 			correctPins = false;
 		}
 
 		if (correctPins) {
 			let createLcd = true;
-			
-			if (generic_raspberrypi.dataLoaded.assignedPins.includes(rs)) {
-				createLcd = false;
-			}
 
-			for (let pin of Object.keys(data.properties)) {
-				if (generic_raspberrypi.dataLoaded.assignedPins.includes(data.properties[pin])) {
+			for (let pin of Object.keys(dataNumber.properties)) {
+				if (generic_raspberrypi.dataLoaded.assignedPins.includes(dataNumber.properties[pin])) {
 					createLcd = false;
 				}
 			}
 
-			if (createLcd) {
-				generic_raspberrypi.dataLoaded.assignedPins.push(rs);
-				generic_raspberrypi.dataLoaded.assignedPins.push(e);
+			if (generic_raspberrypi.dataLoaded.assignedPins.includes(rsNumber)) {
+				createLcd = false;
+			}
 
-				for (let pin of Object.keys(data.properties)) {
-					generic_raspberrypi.dataLoaded.assignedPins.push(data.properties[pin]);
+			if (generic_raspberrypi.dataLoaded.assignedPins.includes(eNumber)) {
+				createLcd = false;
+			}
+
+			if (createLcd) {
+				for (let pin of Object.keys(dataNumber.properties)) {
+					generic_raspberrypi.dataLoaded.assignedPins.push(dataNumber.properties[pin]);
 				}
 
-				for (let component of generic_raspberrypi.dataLoaded.pins[rs].components) {
+				generic_raspberrypi.dataLoaded.assignedPins.push(rsNumber);
+				generic_raspberrypi.dataLoaded.assignedPins.push(eNumber);
+
+				for (let component of generic_raspberrypi.dataLoaded.pins[rsNumber].components) {
 					if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd') {
 						generic_raspberrypi.dataLoaded.components[component].valid = true;
 					}
@@ -82,7 +113,7 @@ let lcd_library = {
 	 */
 	print: function(pin, value) {
 		try {
-			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+			for (let component of generic_raspberrypi.dataLoaded.pins[generic_raspberrypi.parseGpioToPin(pin)].components) {
 				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd' && 
 					generic_raspberrypi.dataLoaded.components[component].valid) {
 					let curRow = generic_raspberrypi.dataLoaded.components[component].curRow;
@@ -107,7 +138,7 @@ let lcd_library = {
 	 */
 	clear: function(pin) {
 		try {
-			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+			for (let component of generic_raspberrypi.dataLoaded.pins[generic_raspberrypi.parseGpioToPin(pin)].components) {
 				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd' && 
 					generic_raspberrypi.dataLoaded.components[component].valid) {
 					for (let i = 0; i < generic_raspberrypi.dataLoaded.components[component].segments[0].length; i ++) {
@@ -133,7 +164,7 @@ let lcd_library = {
 	 */
 	home: function(pin) {
 		try {
-			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+			for (let component of generic_raspberrypi.dataLoaded.pins[generic_raspberrypi.parseGpioToPin(pin)].components) {
 				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd' && 
 					generic_raspberrypi.dataLoaded.components[component].valid) {
 					generic_raspberrypi.dataLoaded.components[component].curCol = 0;
@@ -154,7 +185,7 @@ let lcd_library = {
 	 */
 	setCursor: function(pin, row, col) {
 		try {
-			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+			for (let component of generic_raspberrypi.dataLoaded.pins[generic_raspberrypi.parseGpioToPin(pin)].components) {
 				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd' && 
 					generic_raspberrypi.dataLoaded.components[component].valid) {
 					generic_raspberrypi.dataLoaded.components[component].curCol = col;
@@ -173,7 +204,7 @@ let lcd_library = {
 	 */
 	cursor: function(pin) {
 		try {
-			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+			for (let component of generic_raspberrypi.dataLoaded.pins[generic_raspberrypi.parseGpioToPin(pin)].components) {
 				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd' && 
 					generic_raspberrypi.dataLoaded.components[component].valid) {
 					if (generic_raspberrypi.dataLoaded.components[component].cursor === false) {
@@ -195,7 +226,7 @@ let lcd_library = {
 	 */
 	noCursor: function(pin) {
 		try {
-			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+			for (let component of generic_raspberrypi.dataLoaded.pins[generic_raspberrypi.parseGpioToPin(pin)].components) {
 				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd' && 
 					generic_raspberrypi.dataLoaded.components[component].valid) {
 					generic_raspberrypi.dataLoaded.components[component].cursor = false;
@@ -243,7 +274,7 @@ let lcd_library = {
 	 */
 	scrollDisplayLeft: function(pin) {
 		try {
-			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+			for (let component of generic_raspberrypi.dataLoaded.pins[generic_raspberrypi.parseGpioToPin(pin)].components) {
 				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd' && 
 					generic_raspberrypi.dataLoaded.components[component].valid) {
 					generic_raspberrypi.dataLoaded.components[component].shift += 1;
@@ -263,7 +294,7 @@ let lcd_library = {
 	 */
 	scrollDisplayRight: function(pin) {
 		try {
-			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+			for (let component of generic_raspberrypi.dataLoaded.pins[generic_raspberrypi.parseGpioToPin(pin)].components) {
 				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd' && 
 					generic_raspberrypi.dataLoaded.components[component].valid) {
 					if (generic_raspberrypi.dataLoaded.components[component].shift > 0) {
@@ -337,7 +368,7 @@ let lcd_library = {
 	 */
 	close: function(pin) {
 		try {
-			for (let component of generic_raspberrypi.dataLoaded.pins[pin].components) {
+			for (let component of generic_raspberrypi.dataLoaded.pins[generic_raspberrypi.parseGpioToPin(pin)].components) {
 				if (generic_raspberrypi.dataLoaded.components[component].name === 'lcd' && 
 					generic_raspberrypi.dataLoaded.components[component].valid) {
 					for (let pin of Object.keys(generic_raspberrypi.dataLoaded.pins)) {
