@@ -1,26 +1,35 @@
 <template>
 	<v-card>
-		<v-text-field v-model="nameOwnProject" dense label="Project Name"></v-text-field>
+		<v-card-title primary-title>
+			<h3 class="headline mb-0">Load Project</h3>
+		</v-card-title>
 
-		<v-btn color="secondary" dark @click="addSvg()">Add Project SVG</v-btn>
-		<v-icon v-if="svgNotLoaded" @click="addSvg()">mdi-file-plus</v-icon>
-		<v-progress-circular v-if="svgLoading" indeterminate color="red"></v-progress-circular>
-		<v-icon v-if="!svgNotLoaded && !svgLoading">mdi-checkbox-marked-circle</v-icon>
-		<v-btn v-if="!svgNotLoaded && !svgLoading" @click="removeSvg()"><v-icon>mdi-delete</v-icon></v-btn>
-		<v-text-field v-if="!svgNotLoaded && !svgLoading" :value="svgPath" label="SVG path" outlined readonly></v-text-field>
+		<v-card-text>
+			<v-text-field v-model="nameOwnProject" label="Project Name"></v-text-field>
 
-		<v-btn color="secondary" dark @click="addXml()">Add Project XML</v-btn>
-		<v-icon v-if="xmlNotLoaded" @click="addXml()">mdi-file-plus</v-icon>
-		<v-progress-circular v-if="xmlLoading" indeterminate color="red"></v-progress-circular>
-		<v-icon v-if="!xmlNotLoaded && !xmlLoading">mdi-checkbox-marked-circle</v-icon>
-		<v-btn v-if="!xmlNotLoaded && !xmlLoading" @click="removeXml()"><v-icon>mdi-delete</v-icon></v-btn>
-		<v-text-field v-if="!xmlNotLoaded && !xmlLoading" :value="xmlPath" label="XML path" outlined readonly></v-text-field>
+			<v-btn @click="addSvg()">Add Project SVG</v-btn>
+			<v-icon v-if="svgNotLoaded" @click="addSvg()">mdi-file-plus</v-icon>
+			<v-progress-circular v-if="svgLoading" indeterminate></v-progress-circular>
+			<v-icon v-if="!svgNotLoaded && !svgLoading">mdi-checkbox-marked-circle</v-icon>
+			<v-btn v-if="!svgNotLoaded && !svgLoading" @click="removeSvg()"><v-icon>mdi-delete</v-icon></v-btn>
+			<v-text-field v-if="!svgNotLoaded && !svgLoading" :value="svgPath" label="SVG path" readonly></v-text-field>
 
-		<v-alert v-if="showWarning" type="warning">{{ warning }}</v-alert>
-		<v-alert v-if="showError" type="error">{{ error }}</v-alert>
+			<v-btn @click="addXml()">Add Project XML</v-btn>
+			<v-icon v-if="xmlNotLoaded" @click="addXml()">mdi-file-plus</v-icon>
+			<v-progress-circular v-if="xmlLoading" indeterminate></v-progress-circular>
+			<v-icon v-if="!xmlNotLoaded && !xmlLoading">mdi-checkbox-marked-circle</v-icon>
+			<v-btn v-if="!xmlNotLoaded && !xmlLoading" @click="removeXml()"><v-icon>mdi-delete</v-icon></v-btn>
+			<v-text-field v-if="!xmlNotLoaded && !xmlLoading" :value="xmlPath" label="XML path" readonly></v-text-field>
 
-		<v-btn v-if="!showError" block color="secondary" dark @click="loadProject()">Load Project</v-btn>
-		<v-btn block color="secondary" dark @click="close()">Close</v-btn>
+			<v-alert v-if="showWarning" type="warning">{{ warning }}</v-alert>
+			<v-alert v-if="showError" type="error">{{ error }}</v-alert>
+		</v-card-text>
+
+		<v-card-actions>
+			<v-spacer></v-spacer>
+			<v-btn text v-if="!showError" @click="loadProject()">Load Project</v-btn>
+			<v-btn text @click="close()">Close</v-btn>
+		</v-card-actions>
 	</v-card>
 </template>
 
