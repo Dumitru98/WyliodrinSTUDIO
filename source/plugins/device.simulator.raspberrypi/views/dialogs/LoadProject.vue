@@ -27,7 +27,7 @@
 
 		<v-card-actions>
 			<v-spacer></v-spacer>
-			<v-btn text v-if="!showError" @click="loadProject()">Load Project</v-btn>
+			<v-btn text @click="loadProject()">Load Project</v-btn>
 			<v-btn text @click="close()">Close</v-btn>
 		</v-card-actions>
 	</v-card>
