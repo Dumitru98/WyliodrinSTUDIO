@@ -1,29 +1,37 @@
 <template>
 	<div>
-		<v-toolbar dense>
-			<v-app-bar-nav-icon @click.stop="projectsListShow = !projectsListShow"></v-app-bar-nav-icon>
+		
+		<v-toolbar flat color="grey lighten-4">
+			<v-app-bar-nav-icon @click.stop="projectsListShow = !projectsListShow" style="margin-left:15px;"></v-app-bar-nav-icon>
 			<v-toolbar-title>{{ projectNameToBeShown }}</v-toolbar-title>
 		</v-toolbar>
 
-		<v-navigation-drawer v-if="projectsList" v-model="projectsListShow" absolute temporary width="400" dark>
+		<v-navigation-drawer v-if="projectsList" v-model="projectsListShow" absolute temporary width="300" dark>
 			<v-list>
-				<v-btn block color="secondary" dark @click="projectsListShow = !projectsListShow">Close</v-btn>
-				<v-btn block color="secondary" dark @click="uploadOwnProject(); projectsListShow = !projectsListShow">Load Project</v-btn>
+				<v-btn flat color="secondary" dark @click="projectsListShow = !projectsListShow">Close</v-btn>
+				<v-btn flat color="secondary" dark @click="uploadOwnProject(); projectsListShow = !projectsListShow">Load Project</v-btn>
 
 				<v-list-item v-for="(project, index) in projectsList" :key="index" @click="projectName = project.originalName; projectsListShow = !projectsListShow">
 					<v-list-item-title>{{ project.name }}</v-list-item-title>
-					<v-list-item-avatar size=150>
+					<v-list-item-avatar size=100>
 						<v-img :src="svgGenericPath + project.svgPath + '.svg'"></v-img>
 					</v-list-item-avatar>
 				</v-list-item>
 			</v-list>
 		</v-navigation-drawer>
 
-		<v-data-table v-show="componentsTable.length !== 0" dense hide-default-footer :headers="headerTable" :items="componentsTable" item-key="pin" class="elevation-1"></v-data-table>
-
-		<div id="raspberrypi_svg"></div>
-
-		<div id="lcd_display"></div>
+		
+		<div class="row">
+			<div class="col-md-5 sim-box">
+				<div class="rpi-sim">
+					<div id="raspberrypi_svg"></div>
+					<div id="lcd_display"></div>
+				</div>
+			</div>
+			<div class="col-md-7 row val-container">
+				<v-data-table v-show="componentsTable.length !== 0" hide-default-footer :headers="headerTable" :items="componentsTable" item-key="pin" class="elevation-1"></v-data-table>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -196,7 +204,7 @@ export default {
 		 */
 		async uploadOwnProject() {
 			let state = await this.studio.workspace.showDialog(LoadProject, {
-				width: 1000
+				width: 500
 			});
 
 			if (state) {
@@ -243,3 +251,7 @@ export default {
 	}
 }
 </script>
+
+<style lang="less" scoped>
+	@import '../style/devicesim.less';
+</style>

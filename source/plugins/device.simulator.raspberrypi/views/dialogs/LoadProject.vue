@@ -7,18 +7,22 @@
 		<v-card-text>
 			<v-text-field v-model="nameOwnProject" label="Project Name"></v-text-field>
 
-			<v-btn @click="addSvg()">Add Project SVG</v-btn>
-			<v-icon v-if="svgNotLoaded" @click="addSvg()">mdi-file-plus</v-icon>
-			<v-progress-circular v-if="svgLoading" indeterminate></v-progress-circular>
-			<v-icon v-if="!svgNotLoaded && !svgLoading">mdi-checkbox-marked-circle</v-icon>
+			<v-btn class="ma-2" tile @click="addSvg()">
+				<v-icon left v-if="svgNotLoaded" @click="addSvg()">mdi-file-plus</v-icon>
+				<v-icon left v-if="!svgNotLoaded && !svgLoading">mdi-checkbox-marked-circle</v-icon>
+				<v-progress-circular v-if="svgLoading" indeterminate></v-progress-circular>
+				Add Project SVG
+			</v-btn>
 			<v-btn v-if="!svgNotLoaded && !svgLoading" @click="removeSvg()"><v-icon>mdi-delete</v-icon></v-btn>
 			<v-text-field v-if="!svgNotLoaded && !svgLoading" :value="svgPath" label="SVG path" readonly></v-text-field>
 
-			<v-btn @click="addXml()">Add Project XML</v-btn>
-			<v-icon v-if="xmlNotLoaded" @click="addXml()">mdi-file-plus</v-icon>
-			<v-progress-circular v-if="xmlLoading" indeterminate></v-progress-circular>
-			<v-icon v-if="!xmlNotLoaded && !xmlLoading">mdi-checkbox-marked-circle</v-icon>
-			<v-btn v-if="!xmlNotLoaded && !xmlLoading" @click="removeXml()"><v-icon>mdi-delete</v-icon></v-btn>
+			<v-btn class="ma-2" tile @click="addXml()">
+				<v-icon left v-if="xmlNotLoaded" @click="addXml()">mdi-file-plus</v-icon>
+				<v-icon left v-if="!xmlNotLoaded && !xmlLoading">mdi-checkbox-marked-circle</v-icon>
+				<v-progress-circular v-if="xmlLoading" indeterminate></v-progress-circular>
+				Add Project XML
+			</v-btn>
+			<v-btn class="ma-2" tile v-if="!xmlNotLoaded && !xmlLoading" @click="removeXml()"><v-icon left>mdi-delete</v-icon></v-btn>
 			<v-text-field v-if="!xmlNotLoaded && !xmlLoading" :value="xmlPath" label="XML path" readonly></v-text-field>
 
 			<v-alert v-if="showWarning" type="warning">{{ warning }}</v-alert>
