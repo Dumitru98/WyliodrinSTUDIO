@@ -218,8 +218,8 @@ export default {
 
 				if (elementLcd[0]) {
 					let position = elementLcd[0].getBoundingClientRect();
-					let svgLeftPosition = position.left + 37;
-					let svgTopPosition = position.top - 92;
+					let svgLeftPosition = position.left;
+					let svgTopPosition = position.top - 185.5;
 					
 					let lcd = document.createElement('g');
 					lcd.style.cssText = 'position: absolute; left:' + svgLeftPosition + 'px; top: ' + svgTopPosition + 'px;';
