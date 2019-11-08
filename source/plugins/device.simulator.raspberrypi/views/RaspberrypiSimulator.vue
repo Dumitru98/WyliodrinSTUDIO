@@ -8,8 +8,8 @@
 
 		<v-navigation-drawer v-if="projectsList" v-model="projectsListShow" absolute temporary width="300" dark>
 			<v-list>
-				<v-btn flat color="secondary" dark @click="projectsListShow = !projectsListShow">Close</v-btn>
-				<v-btn flat color="secondary" dark @click="uploadOwnProject(); projectsListShow = !projectsListShow">Load Project</v-btn>
+				<v-btn flat color="secondary" dark @click="projectsListShow = !projectsListShow">{{$t('DEVICE_SIMULATOR_RASPBERRY_PI_CLOSE_PROJECT_LIST')}}</v-btn>
+				<v-btn flat color="secondary" dark @click="uploadOwnProject(); projectsListShow = !projectsListShow">{{$t('DEVICE_SIMULATOR_RASPBERRY_PI_LOAD_PROJECT')}}</v-btn>
 
 				<v-list-item v-for="(project, index) in projectsList" :key="index" @click="projectName = project.originalName; projectsListShow = !projectsListShow">
 					<v-list-item-title>{{ project.name }}</v-list-item-title>
@@ -54,15 +54,15 @@ export default {
 
 			componentsTable: [],
 			headerTable: [{
-				text: 'Pins',
+				text: null,
 				align: 'left',
 				sortable: false,
 				value: 'pins'
 			}, {
-				text: 'Name',
+				text: null,
 				value: 'name'
 			}, {
-				text: 'Color',
+				text: null,
 				value: 'color'
 			}],
 
@@ -78,6 +78,12 @@ export default {
 	 * Read and create the list of projects, as well as load the initial project
 	 */
 	async created() {
+
+		// Name the header titles of the table
+		this.headerTable[0].text = "Pins";
+		this.headerTable[1].text = "Name";
+		this.headerTable[2].text = "Color";
+
 		// Load the tutorials list of projects
 		this.svgGenericPath = generic_raspberrypi.svgGenericPath;
 

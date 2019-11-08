@@ -1,17 +1,17 @@
 <template>
 	<v-card>
 		<v-card-title primary-title>
-			<h3 class="headline mb-0">Load Project</h3>
+			<h3 class="headline mb-0">{{$t('DEVICE_SIMULATOR_RASPBERRY_PI_LOAD_PROJECT')}}</h3>
 		</v-card-title>
 
 		<v-card-text>
-			<v-text-field v-model="nameOwnProject" label="Project Name"></v-text-field>
+			<v-text-field v-model="nameOwnProject" :label="$t('DEVICE_SIMULATOR_RASPBERRY_PI_PROJECT_DIALOG_NAME_LABEL')"></v-text-field>
 
 			<v-btn class="ma-2" tile @click="addSvg()">
 				<v-icon left v-if="svgNotLoaded" @click="addSvg()">mdi-file-plus</v-icon>
 				<v-icon left v-if="!svgNotLoaded && !svgLoading">mdi-checkbox-marked-circle</v-icon>
 				<v-progress-circular v-if="svgLoading" indeterminate></v-progress-circular>
-				Add Project SVG
+				{{$t('DEVICE_SIMULATOR_RASPBERRY_PI_PROJECT_DIALOG_ADD_SVG')}}
 			</v-btn>
 			<v-btn v-if="!svgNotLoaded && !svgLoading" @click="removeSvg()"><v-icon>mdi-delete</v-icon></v-btn>
 			<v-text-field v-if="!svgNotLoaded && !svgLoading" :value="svgPath" label="SVG path" readonly></v-text-field>
@@ -20,7 +20,7 @@
 				<v-icon left v-if="xmlNotLoaded" @click="addXml()">mdi-file-plus</v-icon>
 				<v-icon left v-if="!xmlNotLoaded && !xmlLoading">mdi-checkbox-marked-circle</v-icon>
 				<v-progress-circular v-if="xmlLoading" indeterminate></v-progress-circular>
-				Add Project XML
+				{{$t('DEVICE_SIMULATOR_RASPBERRY_PI_PROJECT_DIALOG_ADD_XML')}}
 			</v-btn>
 			<v-btn class="ma-2" tile v-if="!xmlNotLoaded && !xmlLoading" @click="removeXml()"><v-icon left>mdi-delete</v-icon></v-btn>
 			<v-text-field v-if="!xmlNotLoaded && !xmlLoading" :value="xmlPath" label="XML path" readonly></v-text-field>
@@ -31,8 +31,8 @@
 
 		<v-card-actions>
 			<v-spacer></v-spacer>
-			<v-btn text @click="loadProject()">Load Project</v-btn>
-			<v-btn text @click="close()">Close</v-btn>
+			<v-btn text @click="loadProject()">{{$t('DEVICE_SIMULATOR_RASPBERRY_PI_PROJECT_DIALOG_UPLOAD')}}</v-btn>
+			<v-btn text @click="close()">{{$t('DEVICE_SIMULATOR_RASPBERRY_PI_PROJECT_DIALOG_CLOSE')}}</v-btn>
 		</v-card-actions>
 	</v-card>
 </template>
